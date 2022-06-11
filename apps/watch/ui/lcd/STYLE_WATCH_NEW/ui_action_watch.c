@@ -320,6 +320,9 @@ static void PROGRESS_SLEEP_timer(void *priv)
     static int last_min = 0;
     static int last_percent = 0;
     int percent = 0;
+	static char sleep_hrs_result = 0;
+	static char sleep_wear_result = 0;
+	static char sleep_sec = 0;
     struct progress_sleep_priv *this = (struct progress_sleep_priv *)priv;
 
     /* if (++this->sec >= 60) { */
@@ -331,9 +334,46 @@ static void PROGRESS_SLEEP_timer(void *priv)
     /* } */
     /* } */
     /* } */
-
+	printf("PROGRESS_SLEEP_timer====");
+	if(1/*get_sleep_status()*/)
+	{
+	    printf("PROGRESS_SLEEP_timer====111");
+        #if TCFG_HRS3605_EN || TCFG_HRS1662_EN
+        if(!get_hrs_enable_status())
+		{
+			printf("PROGRESS_SLEEP_timer====222");
+			hr_sensor_io_ctl(HR_SENSOR_DISABLE, NULL);
+			hr_sensor_io_ctl(HR_SENSOR_ENABLE, NULL);
+		}
+	    sleep_hrs_result = get_hrs_results();//getCurrentHR(whr.workbuf);//实时调取心率
+	    sleep_wear_result = get_hrs_wear_results();
+        #else
+        sleep_hrs_result = 78;
+        sleep_wear_result = 1;
+        #endif
+		printf("hrs %d wear %d",sleep_hrs_result,sleep_wear_result);
+		if(sleep_wear_result)
+		{
+        
+		/*sleep_sec++;
+		if(sleep_sec>=60)
+			{
+			sleep_sec = 0;
+			//this->min++;
+		}*/
+        this->min = slight_sleep_time();
+		}
+	}
+	else{
+         #if TCFG_HRS3605_EN || TCFG_HRS1662_EN
+		if(get_hrs_enable_status()){
+		hr_sensor_io_ctl(HR_SENSOR_DISABLE, NULL);
+		}
+        #endif
+	}
     //test
-    this->min += 10;
+    //this->min += 10;
+    printf("this->min %d",this->min);
     if (this->min >= 60) {
         this->min = 0;
         this->hour++;
@@ -375,12 +415,12 @@ static void PROGRESS_SLEEP_timer(void *priv)
         last_percent = percent;
     }
 #else
+	printf("PROGRESS_SLEEP_timer====22222222222222222222");
 
     ui_update_source_by_elm(priv, 1);
 
 #endif
 }
-
 
 static int PROGRESS_SLEEP_onchange(void *ctr, enum element_change_event e, void *arg)
 {
