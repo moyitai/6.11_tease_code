@@ -211,7 +211,33 @@ static int set_onchange(void *_ctrl, enum element_change_event event, void *arg)
     }
     return 0;
 }
-
+static int VLIST_SET_enter_onkey(void *ctr, struct element_key_event *e)
+{
+    struct layout *layout = (struct layout *)ctr;
+    char CurrDailStyle = watch_get_style();
+    printf("watch_get_items_num = %d ", watch_get_items_num());
+    if(e->value == KEY_UI_MINUS){
+    e->value = KEY_DOWN;
+    }else if(e->value == KEY_UI_PLUS){
+    e->value = KEY_UP;
+    }
+   switch (e->value) {
+    case KEY_OK:
+    printf("skey_ok\n");
+    break;
+    // case KEY_UI_MINUS:
+    case KEY_DOWN:
+    printf("%s,KEY_DOWN out\n",__func__);
+    break;
+    //case KEY_UI_PLUS:
+    case KEY_UP:
+    printf("%s,KEY_UP out\n",__func__);
+    break;
+    default:
+    return false;
+    }
+    return false;
+}
 static int set_ontouch(void *ctr, struct element_touch_event *e)
 {
     struct ui_grid *grid = (struct ui_grid *)ctr;
@@ -294,7 +320,7 @@ static int set_ontouch(void *ctr, struct element_touch_event *e)
 }
 REGISTER_UI_EVENT_HANDLER(VLIST_SET)//设置-垂直列表
 .onchange = set_onchange,
- .onkey = NULL,
+ .onkey = VLIST_SET_enter_onkey,//NULL,
   .ontouch = set_ontouch,
 };
 static int layout_set_ontouch(void *ctr, struct element_touch_event *e)
