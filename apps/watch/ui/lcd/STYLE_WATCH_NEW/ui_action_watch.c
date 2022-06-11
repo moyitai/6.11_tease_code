@@ -18,6 +18,7 @@
 #include "asm/math_fast_function.h"
 #include "ui/result_pic_index.h"
 #include "ui/result_str_index.h"
+#include "hrSensor_manage.h"
 
 #if TCFG_UI_ENABLE && (!TCFG_LUA_ENABLE)
 #ifdef CONFIG_UI_STYLE_JL_ENABLE
@@ -1764,31 +1765,159 @@ REGISTER_UI_EVENT_HANDLER(PAGE_18)
 };
 
 
+static u32 MOVING_1_touch_move = 0;
 static u32 icon_tstatus = 0;
 static int startlight_page_ontouch(void *_layout, struct element_touch_event *e)
 {
     struct layout *layout = (struct layout *)_layout;
-    /* static u8 flag = 0; */
+     static u8 flag = 0; 
+    static u8 touch_action = 0;
 
     switch (e->event) {
 
     case ELM_EVENT_TOUCH_UP:
-        /* printf("stouch up\n"); */
-        /* if (flag == 1) { */
-        /* ui_hide_curr_main(); */
-        /* ui_show_main(PAGE_18); */
-        /* } */
-        /* flag = 0; */
+         printf("333stouch up %d\n",MOVING_1_touch_move); 
+         if (flag == 1) { 
+         //ui_hide_curr_main(); 
+         //ui_show_main(PAGE_18); 
+         } 
+         flag = 0; 
+     if (touch_action != 1 || MOVING_1_touch_move) {
+         MOVING_1_touch_move = 0;
+            break;
+        }
+
+
+        switch (layout->elm.id) {
+        case BASEFORM_296:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_54); 
+            } 
+            break;
+        case BASEFORM_297:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_80); 
+            } 
+            break;
+        case BASEFORM_298:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_87); 
+            } 
+            break;
+        case BASEFORM_299:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_76); 
+            } 
+            break;
+        case BASEFORM_300:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_77); 
+            } 
+            break;
+        case BASEFORM_301:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_1); 
+            } 
+            break;
+        case BASEFORM_302:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_2); 
+            } 
+            break;
+        case BASEFORM_303:
+            if (touch_action == 1) { //压力
+                //ui_hide_curr_main(); 
+                //ui_show_main(PAGE_0); 
+            } 
+            break;
+        case BASEFORM_304:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_57); 
+            } 
+            break;
+        case BASEFORM_305:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_22); 
+            } 
+            break;
+        case BASEFORM_306:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_19); 
+            } 
+            break;
+        case BASEFORM_307:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_10); 
+            } 
+            break;
+        case BASEFORM_308:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_64); 
+            } 
+            break;
+        case BASEFORM_309:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_73); 
+            } 
+            break;
+        case BASEFORM_310:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_81); 
+            } 
+            break;
+        case BASEFORM_311:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_66); 
+            } 
+            break;
+        case BASEFORM_312:
+            if (touch_action == 1) { 
+                //ui_hide_curr_main(); //卡包
+                //ui_show_main(PAGE_0); 
+            } 
+            break;
+        case BASEFORM_313:
+            if (touch_action == 1) { 
+                //ui_hide_curr_main(); //支付宝
+                //ui_show_main(PAGE_0); 
+            } 
+            break;
+        
+        case BASEFORM_314:
+            if (touch_action == 1) { //秒表
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_33); 
+            } 
+            break;
+        }
         break;
     case ELM_EVENT_TOUCH_HOLD:
-        /* printf("stouch hold\n"); */
+         printf("333stouch hold\n"); 
         break;
     case ELM_EVENT_TOUCH_MOVE:
-        /* printf("stouch move\n"); */
+        touch_action = 2;
+         printf("333stouch move\n"); 
         /* flag = 2; */
         break;
     case ELM_EVENT_TOUCH_DOWN:
-        printf("stouch down\n");
+        printf("333stouch down\n");
+        touch_action = 1;
+        //return true;
         /* flag = 1; */
         icon_tstatus = 1;
         break;

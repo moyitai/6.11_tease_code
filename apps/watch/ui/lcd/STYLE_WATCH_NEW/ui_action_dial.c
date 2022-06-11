@@ -14,6 +14,8 @@
 #include "asm/imb.h"
 #include "ui_draw/ui_wave.h"
 #include "ui/ui_measure.h"
+#include "ui/ui_api.h"
+
 
 #define LOG_TAG_CONST       UI
 #define LOG_TAG     		"[UI-ACTION]"

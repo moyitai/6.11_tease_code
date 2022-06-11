@@ -9073,10 +9073,15 @@ obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,ui_core_get_element_abs_rect,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,ui_core_redraw_area,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,ui_core_redraw,l
+-r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,watch_get_style,l
+-r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,printf,l
+-r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,watch_get_items_num,l
+-r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,watch_set_style,l
+-r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,ui_hide_curr_main,l
+-r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,ui_show_main,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,ui_set_default_handler,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,ui_watch_slow_sec_by_id,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,watch_bgp_get_related,l
--r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,watch_get_style,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,res_fopen,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,ui_res_flash_info_get,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,res_fread,l
@@ -9095,6 +9100,7 @@ obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,get_undisturb_ensure_release_flag,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,set_undistrub_ensure_release_flag,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,is_create_control_by_menu,l
+-r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,puts,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,elm_event_handler_begin_JL,
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,elm_event_handler_end_JL,
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_dial.o,log_tag_const_i_UI,l
@@ -9431,6 +9437,9 @@ obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,get_all_day_undisturb_sel,pl
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,ui_send_event,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,ui_return_page_push,l
+-r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,watch_get_style,l
+-r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,printf,l
+-r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,watch_get_items_num,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,ui_grid_set_slide_direction,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,ui_return_page_pop,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,ui_text_set_index,l
@@ -9439,7 +9448,6 @@ obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,ui_hide,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,strrchr,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,watch_get_item,l
--r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,watch_get_style,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,ui_text_set_text_attrs,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,strlen,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,ui_grid_init_dynamic,l
@@ -9486,6 +9494,7 @@ obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,bredr_conn_last_dev,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,bt_close_bredr,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,ui_pic_show_image,l
+-r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,puts,l
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,elm_event_handler_begin_JL,
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,elm_event_handler_end_JL,
 -r=obj/Release/apps/watch/ui/lcd/STYLE_WATCH_NEW/ui_action_set.o,ui_page_list,pl
