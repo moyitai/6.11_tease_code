@@ -65,7 +65,7 @@
 #define __this 	(&app_bt_hdl)
 
 
-#define BT_BREDR_INTI_TIMEOUT_MS			(60*1000)
+#define BT_BREDR_INTI_TIMEOUT_MS			0//(60*1000)
 static u16 bt_bredr_to_id = 0;
 static u16 bt_bredr_cnt = (u16) - 1;
 
