@@ -1,2 +1,13 @@
 /.vscode
 *.o
+cpu/br28/tools/app.bin
+cpu/br28/tools/sdk.elf
+cpu/br28/tools/sdk.elf.0.0.preopt.bc
+.gitignore
+cpu/br28/tools/sdk.elf.0.4.opt.bc
+cpu/br28/tools/sdk.elf.0.5.precodegen.bc
+cpu/br28/tools/sdk.elf.resolution.txt
+cpu/br28/tools/sdk.map
+cpu/br28/tools/download/watch/jl_isd.bin
+cpu/br28/tools/download/watch/md5.bin
+cpu/br28/tools/download/watch/res.bin

@@ -177,7 +177,18 @@ void ui_sysinfo_init()
     ui_set_dark_time(get_ui_sys_param(DarkTime));
     ui_voice_mute(get_ui_sys_param(SysVoiceMute));
     card_set_num = get_ui_sys_param(CardSetNum);
-
+    u8 menu = get_ui_sys_param(MenuStyle);
+    printf("111111111111111111111111111111%s %d",__func__,menu);
+    if(menu == 0)
+    {
+        ui_show_page_list[1] = ID_WINDOW_VMENU;
+    }else if(menu == 1)
+    {
+        ui_show_page_list[1] = PAGE_3;
+    }else if(menu == 1)
+    {
+        ui_show_page_list[1] = PAGE_17;
+    }
     for (card_start_index = 0; card_start_index < sizeof(ui_show_page_list) / sizeof(ui_show_page_list[0]); card_start_index++) {
         if (ui_show_page_list[card_start_index] == 0) {
             break;
@@ -4724,18 +4735,32 @@ static int text_menu_style_ontouch(void *ctr, struct element_touch_event *e)
         if (touch_action != 1) {
             break;
         }
-
+        //get_menu_page = text->elm.id;
         switch (text->elm.id) {
         case TEXT_MENU_STYLE1:
             set_ui_sys_param(MenuStyle, 0);
+            ui_show_page_list[1] = ID_WINDOW_VMENU;
             break;
         case TEXT_MENU_STYLE2:
             set_ui_sys_param(MenuStyle, 1);
+            ui_show_page_list[1] = PAGE_3;
             break;
         case TEXT_MENU_STYLE3:
             set_ui_sys_param(MenuStyle, 2);
+            ui_show_page_list[1] = PAGE_17;
             break;
         }
+
+        u8 list_total_num = get_ui_page_list_total_num();
+         printf("00000000000ui_show_page_list[1] = %x",ui_show_page_list[1]);
+        ui_page_list_update(ui_show_page_list, list_total_num);
+        /*if (UIInfo_w_vm_timer == 0) {
+        UIInfo_w_vm_timer = sys_timer_add(NULL, write_UIInfo_to_vm, 1000);
+        } else {
+        sys_timer_re_run(UIInfo_w_vm_timer);
+        }*/
+        printf("ui_show_page_list[1] = %x",ui_show_page_list[1]);
+
         ui_send_event(KEY_CHANGE_PAGE, BIT(31) | PAGE_SET);
         break;
     case ELM_EVENT_TOUCH_DOWN:
