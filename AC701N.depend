@@ -4863,7 +4863,7 @@
 	"board_config.h"
 	"app_task.h"
 
-1652426236 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\board\br28\board_701n_demo\key_table\iokey_table.c
+1654936906 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\board\br28\board_701n_demo\key_table\iokey_table.c
 	"key_event_deal.h"
 	"key_driver.h"
 	"app_config.h"
@@ -5493,7 +5493,7 @@
 
 1652426241 e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\smartbox\smartbox_setting\adv_time_stamp_setting.h
 
-1652426246 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\smartbox\cmd_data_deal\cmd_recieve.c
+1654937317 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\smartbox\cmd_data_deal\cmd_recieve.c
 	"smartbox/config.h"
 	"smartbox/smartbox.h"
 	"smartbox/function.h"
@@ -7261,7 +7261,7 @@
 	"btstack/avctp_user.h"
 	"debug.h"
 
-1654932958 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\ui\lcd\style_watch_new\ui_action_dial.c
+1654934914 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\ui\lcd\style_watch_new\ui_action_dial.c
 	"app_config.h"
 	"ui/ui_style.h"
 	"ui/ui.h"
@@ -7277,6 +7277,7 @@
 	"asm/imb.h"
 	"ui_draw/ui_wave.h"
 	"ui/ui_measure.h"
+	"ui/ui_api.h"
 	"debug.h"
 
 1652426452 e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\include_lib\system\ui_new\ui\cpu\br28\asm\imb.h
@@ -7358,7 +7359,7 @@
 	"ui/ui_core.h"
 	"rect.h"
 
-1654932805 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\ui\lcd\style_watch_new\ui_action_menu.c
+1654935348 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\ui\lcd\style_watch_new\ui_action_menu.c
 	"app_config.h"
 	"ui/ui_style.h"
 	"ui/ui.h"
@@ -7512,7 +7513,7 @@
 
 1652426236 e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\include\ui\qr_code.h
 
-1654933191 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\ui\lcd\style_watch_new\ui_action_set.c
+1654936307 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\ui\lcd\style_watch_new\ui_action_set.c
 	"app_config.h"
 	"ui/ui_style.h"
 	"ui/ui.h"

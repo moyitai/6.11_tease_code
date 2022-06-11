@@ -648,7 +648,7 @@ DAC硬件上的连接方式,可选的配置：
 //*********************************************************************************//
 //                                  g-sensor配置                                   //
 //*********************************************************************************//
-#define TCFG_GSENSOR_ENABLE                       0    //gSensor使能
+#define TCFG_GSENSOR_ENABLE                       1    //gSensor使能
 #define TCFG_DA230_EN                             0
 #define TCFG_SC7A20_EN                            0
 #define TCFG_P11GSENSOR_EN                        0    //使用p11 sensor hub
@@ -658,8 +658,8 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_MC3433_EN							  0
 #define TCFG_MPU6050_EN							  0
 #define TCFG_GSENOR_USER_IIC_TYPE                 0     //0:软件IIC  1:硬件IIC
-#define TCFG_GSENOR_USER_IIC_INDEX                0     //IIC 序号
-#define TCFG_GSENSOR_NAME                         "p11gsensor"     //传感器名称 需要和宏开关匹配
+#define TCFG_GSENOR_USER_IIC_INDEX                1     //IIC 序号
+#define TCFG_GSENSOR_NAME                        "sc7a20"     //传感器名称 需要和宏开关匹配
 #define TCFG_GSENSOR_DETECT_IO                    (-1) //传感器中断io
 
 //*********************************************************************************//

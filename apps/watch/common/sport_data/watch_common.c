@@ -20,6 +20,7 @@
 #include "sport_info_sleep_detection.h"
 #include "sys_time.h"
 #include "clock_cfg.h"
+#include "gSensor/SL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Algorithm.h"
 
 #define USED_TIMER         (1)
 #define USED_TASK          (2)
@@ -1418,10 +1419,6 @@ int detection_init(void)
     }
     printf("sendentary=%d,fall=%d,wrist=%d,sleep=%d", WP.Sedentary_enable, WP.fall_enable, WP.wrist_enable, WP.sleep_enable);
     return 0;
-}
-u8 get_wrist_detect_result(void)
-{
-	return 0;//SL_CLOCK_STATUS;
 }
 static u8 wrist_detect_mode_one_500;
 static u8 wrist_detect_mode_two_500;

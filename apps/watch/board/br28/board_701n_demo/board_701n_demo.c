@@ -531,12 +531,12 @@ const struct soft_iic_config soft_iic_cfg[] = {
         .delay = TCFG_SW_I2C0_DELAY_CNT,                //软件IIC延时参数，影响通讯时钟频率
         .io_pu = 1,                                     //是否打开上拉电阻，如果外部电路没有焊接上拉电阻需要置1
     },
-#if 0
+#if 1
     //iic1 data
     {
-        .scl = IO_PORTA_05,
-        .sda = IO_PORTA_06,
-        .delay = 50,
+        .scl = IO_PORTB_04,
+        .sda = IO_PORTB_05,
+        .delay = TCFG_SW_I2C0_DELAY_CNT,
         .io_pu = 1,
     },
 #endif
@@ -545,9 +545,13 @@ const struct soft_iic_config soft_iic_cfg[] = {
 u32 soft_iic_real_delay[] = {
     //iic0 data
     TCFG_SW_I2C0_DELAY_CNT,
-#if 0
+#if 1
     //iic1 data
-    50,
+    TCFG_SW_I2C0_DELAY_CNT,
+#endif
+#if 1
+    //iic1 data
+    TCFG_SW_I2C0_DELAY_CNT,
 #endif
 };
 
@@ -706,7 +710,7 @@ SD0_PLATFORM_DATA_END()
 #if (TCFG_HR_SENSOR_ENABLE||TCFG_SPO2_SENSOR_ENABLE)
 
 HRSENSOR_PLATFORM_DATA_BEGIN(hrSensor_data)
-    .iic = 0,//TCFG_HR_SENOR_USER_IIC_INDEX ,
+    .iic = 1,//TCFG_HR_SENOR_USER_IIC_INDEX ,
     .hrSensor_name = TCFG_HR_SENOR_NAME,
 HRSENSOR_PLATFORM_DATA_END()
 
