@@ -1419,6 +1419,92 @@ int detection_init(void)
     printf("sendentary=%d,fall=%d,wrist=%d,sleep=%d", WP.Sedentary_enable, WP.fall_enable, WP.wrist_enable, WP.sleep_enable);
     return 0;
 }
+u8 get_wrist_detect_result(void)
+{
+	return 0;//SL_CLOCK_STATUS;
+}
+static u8 wrist_detect_mode_one_500;
+static u8 wrist_detect_mode_two_500;
+static void wrist_rist_detect_1st(void)
+{
+
+    if(lcd_sleep_status())
+    {
+        if(get_wrist_detect_result())
+        {
+            printf("wrist open screen ist");
+            ui_backlight_open(1);
+        }
+    }else{
+        if(get_wrist_detect_result())
+        {
+             printf("wrist close screen ist");
+           ui_backlight_close();
+        }
+
+    }
+}
+
+static void get_sys_time(struct sys_time *time)
+{
+    void *fd = dev_open("rtc", NULL);
+    if (!fd) {
+        get_elapse_time(time);
+        return;
+    }
+    dev_ioctl(fd, IOCTL_GET_SYS_TIME, (u32)time);
+    /* log_info("get_sys_time : %d-%d-%d,%d:%d:%d\n", time->year, time->month, time->day, time->hour, time->min, time->sec); */
+    dev_close(fd);
+}
+
+static u8 wrist_mode_time[4] = {0};
+static void wrist_raise_detect_sed(void)
+{
+    u8 raise_detect = 0;
+    struct sys_time *time;
+    printf("%s",__func__);
+    get_sys_time(time);
+    if(time->hour == wrist_mode_time[0] && time->min == wrist_mode_time[1])
+    {
+        raise_detect = 1;
+        printf("wrist  raise_detect = 1;");
+    }
+    if(time->hour == wrist_mode_time[2] && time->min == wrist_mode_time[3])
+    {
+        raise_detect = 2;
+         printf("wrist  raise_detect = 2;");
+    }
+    if( 1 == raise_detect)
+    {
+
+        if(lcd_sleep_status())
+        {
+            if(get_wrist_detect_result())
+            {
+                 printf("wrist open screen scd raise_detect = 1;");
+                ui_backlight_open(1);
+            }
+        }
+        else{
+            if(get_wrist_detect_result())
+            {
+                 printf("wrist close screen scd raise_detect = 1;");
+            ui_backlight_close();
+            }
+
+        }
+    }
+    if( 2 == raise_detect)
+    {
+       /* if(get_wrist_detect_result())
+        {
+             ui_screen_recover(1);
+        }*/
+        printf("not excuct this");
+
+    }
+
+}
 int detection_ioctrl(int arg_num, int *arg) //打开检测功能，注册回调函数
 {
     int type = -1;
@@ -1448,8 +1534,72 @@ int detection_ioctrl(int arg_num, int *arg) //打开检测功能，注册回调�
            __func__, arg_num,		type,	enable,	response_mode,	time[0], time[1], time[2], time[3]);
     switch (type) {
     case WRIST:
+     {
+        wrist_mode_time[0] = (arg[3] >> 24) & 0xff;
+        wrist_mode_time[1] = (arg[3] >> 16) & 0xff;
+        wrist_mode_time[2] = (arg[3] >> 8) & 0xff;
+        wrist_mode_time[3] = (arg[3]) & 0xff;
+        if(enable)
+        {
+            if(enable == 1 ){
+            printf("open wrist detete mode 1"); //模式一 全天开启
+            if(wrist_detect_mode_two_500)//如果打开模式二定时器 先关闭
+            {
+                sys_timer_del(wrist_detect_mode_two_500);
+                wrist_detect_mode_two_500 = 0;
+            }
+            if(!wrist_detect_mode_one_500){ //如果没有打开模式1 的定时器打开
+
+                wrist_detect_mode_one_500 = sys_timer_add(NULL,wrist_rist_detect_1st, 500);
+             }
+                break;
+            }
+        //     else if(enable == 2)//模式二
+        //     {
+        //     if(wrist_detect_mode_one_500)//如果打开模式一定时器 先关闭模式一定时器
+        //     {
+        //         sys_timer_del(wrist_detect_mode_one_500);
+        //         wrist_detect_mode_one_500 = 0;
+        //     }
+        //     if(!wrist_detect_mode_two_500){
+        //         printf("tran time to the timer");
+        //     wrist_detect_mode_two_500 = sys_timer_add(NULL,wrist_raise_detect_sed, 500);
+        //     printf("tran time to the timer11111");
+        //     }
+        //     break;
+        // }
+        }
+        else{
+            if(wrist_detect_mode_one_500){
+                sys_timer_del(wrist_detect_mode_one_500);
+                wrist_detect_mode_one_500 = 0;
+            }
+            // if(wrist_detect_mode_two_500)
+            // {
+            //     sys_timer_del(wrist_detect_mode_two_500);
+            //     wrist_detect_mode_two_500 = 0;
+            // }
+            printf("close wrist detete");
+            break;
+        }
+        }
+        break;
     case FALL:
+        if(enable)
+        {
+            printf("open FALL detete");
+        }else{
+            printf("close FALL detete");
+        }
+        break;
     case SEDENTARY:
+        if(enable)
+        {
+            printf("open SEDENTARY detete");
+        }else{
+            printf("close SEDENTARY detete");
+        }
+        break;
     case SLEEP:
         save_detection_set(type, enable, response_mode, time);
         break;
