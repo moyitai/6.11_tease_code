@@ -916,7 +916,7 @@ struct port_wakeup port2 = {
     .edge               = FALLING_EDGE,                      //唤醒方式选择,可选：上升沿\下降沿
     .both_edge          = 0,
     .filter             = PORT_FLT_8ms,
-    .iomap              = TCFG_IOKEY0,                    //唤醒口选择
+    .iomap              = TCFG_IOKEY1,                    //唤醒口选择
 };
 #endif
 
@@ -1345,7 +1345,7 @@ void board_set_soft_poweroff(void)
 
 	//power按键
 #if TCFG_IOKEY_ENABLE
-    port_protect(port_group, TCFG_IOKEY0);
+    port_protect(port_group, TCFG_IOKEY1);
 #endif
 
 #if TCFG_UMIDIGI_BOX_ENABLE

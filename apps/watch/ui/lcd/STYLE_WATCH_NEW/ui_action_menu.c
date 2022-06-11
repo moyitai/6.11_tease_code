@@ -144,7 +144,33 @@ static int menu_switch_ontouch(void *ctr, struct element_touch_event *e)
 }
 
 
-
+static int menu_enter_onkey(void *ctr, struct element_key_event *e)
+{
+    struct layout *layout = (struct layout *)ctr;
+    char CurrDailStyle = watch_get_style();
+    printf("watch_get_items_num = %d ", watch_get_items_num());
+    if(e->value == KEY_UI_MINUS){
+    e->value = KEY_DOWN;
+    }else if(e->value == KEY_UI_PLUS){
+    e->value = KEY_UP;
+    }
+   switch (e->value) {
+    case KEY_OK:
+    printf("skey_ok\n");
+    break;
+    // case KEY_UI_MINUS:
+    case KEY_DOWN:
+    printf("%s,KEY_DOWN out\n",__func__);
+    break;
+    //case KEY_UI_PLUS:
+    case KEY_UP:
+    printf("%s,KEY_UP out\n",__func__);
+    break;
+    default:
+    return false;
+    }
+    return false;
+}
 
 static int menu_enter_onchane(void *ctr, enum element_change_event e, void *arg)
 {
@@ -169,12 +195,12 @@ static int menu_enter_onchane(void *ctr, enum element_change_event e, void *arg)
 
 REGISTER_UI_EVENT_HANDLER(VERTLIST)
 .onchange = menu_enter_onchane,
- .onkey = NULL,
+ .onkey = menu_enter_onkey,//NULL,
   .ontouch = menu_switch_ontouch,
 };
 REGISTER_UI_EVENT_HANDLER(BASEFORM_41)
 .onchange = menu_enter_onchane,
- .onkey = NULL,
+ .onkey = menu_enter_onkey,//NULL,
   .ontouch = NULL,//menu_switch_ontouch,
 };
 

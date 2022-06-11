@@ -230,10 +230,10 @@
 //*********************************************************************************//
 //                                 rdec_key 配置                                      //
 //*********************************************************************************//
-#define TCFG_RDEC_KEY_ENABLE					DISABLE_THIS_MOUDLE //是否使能RDEC按键
+#define TCFG_RDEC_KEY_ENABLE					ENABLE_THIS_MOUDLE //是否使能RDEC按键
 //RDEC0配置
-#define TCFG_RDEC0_ECODE1_PORT					IO_PORTA_12
-#define TCFG_RDEC0_ECODE2_PORT					IO_PORTA_13
+#define TCFG_RDEC0_ECODE1_PORT					IO_PORTB_09//IO_PORTA_12
+#define TCFG_RDEC0_ECODE2_PORT					IO_PORTC_07//IO_PORTA_13
 #define TCFG_RDEC0_KEY0_VALUE 				 	0
 #define TCFG_RDEC0_KEY1_VALUE 				 	1
 
