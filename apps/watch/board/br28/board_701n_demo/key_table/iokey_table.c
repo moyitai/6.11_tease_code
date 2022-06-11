@@ -12,10 +12,10 @@
 const u16 bt_key_io_table[KEY_IO_NUM_MAX][KEY_EVENT_MAX] = {
     //单击             //长按          //hold         //抬起            //双击                //三击
     [0] = {
-        KEY_UI_HOME, KEY_UI_POWEROFF
+        KEY_UI_HOME
     },
     [1] = {
-        KEY_UI_SHORTCUT
+        KEY_UI_SHORTCUT, KEY_UI_POWEROFF
     },
     [2] = {
         KEY_NULL, KEY_NULL
