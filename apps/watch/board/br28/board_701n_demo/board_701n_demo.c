@@ -492,15 +492,26 @@ LCD_SPI_PLATFORM_DATA_BEGIN(lcd_spi_data)
 
 #if TCFG_LCD_MCU_JD5858_ZHAOYU_ENABLE
     .pin_reset= IO_PORTA_02,
-    .pin_cs	= IO_PORTA_07,
-    .pin_dc	= IO_PORTG_08,
+    .pin_cs	= IO_PORTA_06,
+    .pin_dc	= IO_PORTA_07,
     .pin_te = IO_PORTA_03,
     .pin_en	= NO_CONFIG_PORT,
     .pin_bl = TCFG_BACKLIGHT_PWM_IO,
     .mcu_pins = {
         .pin_wr = PIN_SYNC1_PA5,
-        .pin_rd = PIN_SYNC2_PA6,
+        .pin_rd = PIN_SYNC0_PA4,
     },
+
+    // .pin_reset= IO_PORTA_02,
+    // .pin_cs	= IO_PORTA_07,
+    // .pin_dc	= IO_PORTG_08,
+    // .pin_te = IO_PORTA_03,
+    // .pin_en	= NO_CONFIG_PORT,
+    // .pin_bl = TCFG_BACKLIGHT_PWM_IO,
+    // .mcu_pins = {
+    //     .pin_wr = PIN_SYNC1_PA5,
+    //     .pin_rd = PIN_SYNC2_PA6,
+    // },
 #endif
 
 #if (TCFG_TFT_LCD_DEV_SPI_HW_NUM == 1)
