@@ -11,6 +11,7 @@ extern void platform_putchar(struct font_info *info, u8 *pixel, u16 width, u16 h
 
 #define LANGUAGE  BIT(Chinese_Simplified) \
                   | BIT(English) \
+                  | BIT(Japanese) \
                   | BIT(Chinese_Traditional) \
 
 const struct font_info font_info_table[] = {
@@ -129,16 +130,26 @@ const struct font_info font_info_table[] = {
     },
 
 
-    /* { */
-    /*     .language_id = Japanese, */
-    /*     .flags = FONT_SHOW_PIXEL | FONT_SHOW_MULTI_LINE, */
-    /*     .pixel.file.name = (char *)FONT_PATH"F_SJIS.PIX", */
-    /*     .ascpixel.file.name = (char *)FONT_PATH"F_ASCII.PIX", */
-    /*     .tabfile.name = (char *)FONT_PATH"F_SJIS.TAB", */
-    /*     .isgb2312 = false, */
-    /*     .bigendian = false, */
-    /*     .putchar = platform_putchar, */
-    /* }, */
+     { 
+         .language_id = Japanese, 
+         .flags = FONT_SHOW_PIXEL | FONT_SHOW_MULTI_LINE, 
+         .pixel.file.name = (char *)FONT_PATH"F_SJIS.PIX", 
+         .ascpixel.file.name = (char *)FONT_PATH"F_ASCII.PIX", 
+         .tabfile.name = (char *)FONT_PATH"F_SJIS.TAB", 
+         .isgb2312 = false, 
+         .bigendian = false, 
+         .putchar = platform_putchar, 
+     }, 
+    {
+        .language_id = English,
+        .flags = FONT_SHOW_PIXEL | FONT_SHOW_MULTI_LINE,
+        .pixel.file.name = (char *)FONT_PATH"F_CP1252.PIX",
+        //.ascpixel.file.name = (char *)FONT_PATH"F_ASCII.PIX",
+        .tabfile.name = (char *)FONT_PATH"F_CP1252.TAB",
+        .isgb2312 = false,
+        .bigendian = false,
+        .putchar = platform_putchar,
+    },
 
     {
         .language_id = Polish,   //所有共用CP1250的语言都统一用Polish
@@ -197,7 +208,7 @@ const struct font_info font_info_table[] = {
     /* }, */
 #endif
 
-#if LANGUAGE&BIT(English)
+#if 0//LANGUAGE&BIT(English)
     {
         .language_id = English,
         .flags = FONT_SHOW_PIXEL | FONT_SHOW_MULTI_LINE,

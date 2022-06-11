@@ -4544,12 +4544,14 @@ struct SYS_ABOUT_MESSAGE {
     char mac_addr[18];
     char *version;
     char *serial_num;
+    char *supervision;
 };
 
 struct SYS_ABOUT_MESSAGE sys_about_message = {
-    .dev_num = "AC695N",
+    .dev_num = "AC701N",
     .version = "master",
     .serial_num = "ABC1234567890",
+    .supervision = "dinghefeng",
 };
 extern void bt_addr2string(u8 *addr, u8 *buf);
 static int text_about_onchange(void *_ctrl, enum element_change_event event, void *arg)
@@ -4575,6 +4577,9 @@ static int text_about_onchange(void *_ctrl, enum element_change_event event, voi
             break;
         case TEXT_SERIAL_NUM:
             ui_text_set_text_attrs(text, sys_about_message.serial_num, strlen(sys_about_message.serial_num), FONT_ENCODE_ANSI, 0, FONT_DEFAULT);
+            break;
+        case BASEFORM_545:
+            ui_text_set_text_attrs(text, sys_about_message.supervision, strlen(sys_about_message.supervision), FONT_ENCODE_ANSI, 0, FONT_DEFAULT);
             break;
         }
         break;
@@ -4604,6 +4609,11 @@ REGISTER_UI_EVENT_HANDLER(TEXT_VERSION_NUM)
   .ontouch = NULL,
 };
 REGISTER_UI_EVENT_HANDLER(TEXT_SERIAL_NUM)
+.onchange = text_about_onchange,
+ .onkey = NULL,
+  .ontouch = NULL,
+};
+REGISTER_UI_EVENT_HANDLER(BASEFORM_545)
 .onchange = text_about_onchange,
  .onkey = NULL,
   .ontouch = NULL,

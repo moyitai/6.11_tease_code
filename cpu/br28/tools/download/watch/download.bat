@@ -46,7 +46,7 @@ set /p "themd5=" < "md5.bin"
 ..\..\packres.exe -keep-suffix-case watch3.sty watch3.res watch3.str watch3.view watch3.json -n res -o watch3
 ..\..\packres.exe -keep-suffix-case watch4.sty watch4.res watch4.str watch4.view watch4.json -n res -o watch4
 ..\..\packres.exe -keep-suffix-case watch5.sty watch5.res watch5.str watch5.view watch5.json -n res -o watch5
-..\..\packres.exe -keep-suffix-case F_ASCII.PIX F_GB2312.PIX F_GB2312.TAB ascii.res -n res -o font
+..\..\packres.exe -keep-suffix-case F_ASCII.PIX F_GB2312.PIX F_GB2312.TAB F_SJIS.PIX F_SJISASC.PIX F_SJIS.TAB F_CP1252.PIX F_CP1252.TAB ascii.res -n res -o font
 
 ::echo %1
 
