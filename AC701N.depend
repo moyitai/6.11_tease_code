@@ -702,7 +702,7 @@
 
 1652426276 e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\common\audio\audio_type.h
 
-1654932805 e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\board\br28\board_701n_demo\board_701n_demo_cfg.h
+1654943175 e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\board\br28\board_701n_demo\board_701n_demo_cfg.h
 	"board_701n_demo_global_build_cfg.h"
 	"usb_std_class_def.h"
 
@@ -4827,7 +4827,7 @@
 	"app_config.h"
 	"app_task.h"
 
-1654932805 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\board\br28\board_701n_demo\board_701n_demo.c
+1654939045 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\board\br28\board_701n_demo\board_701n_demo.c
 	"app_config.h"
 	"system/includes.h"
 	"media/includes.h"
@@ -5095,7 +5095,7 @@
 
 1652426234 e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\include\sport_data\sport.h
 
-1652426239 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\common\sport_data\watch_common.c
+1654939152 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\common\sport_data\watch_common.c
 	"event.h"
 	"system/includes.h"
 	"app_config.h"
@@ -5118,6 +5118,7 @@
 	"sport_info_sleep_detection.h"
 	"sys_time.h"
 	"clock_cfg.h"
+	"gSensor/SL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Algorithm.h"
 
 1652426234 e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\include\sport_data\watch_api.h
 
@@ -7653,7 +7654,7 @@
 	"music/music_player.h"
 	"debug.h"
 
-1654934528 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\ui\lcd\style_watch_new\ui_action_watch.c
+1654941968 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\watch\ui\lcd\style_watch_new\ui_action_watch.c
 	"app_config.h"
 	"ui/ui_style.h"
 	"ui/ui.h"
@@ -7674,6 +7675,7 @@
 	"asm/math_fast_function.h"
 	"ui/result_pic_index.h"
 	"ui/result_str_index.h"
+	"gSensor/SL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Algorithm.h"
 	"hrSensor_manage.h"
 
 1652426451 e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\include_lib\system\math\cpu\br28\asm\math_fast_function.h
@@ -9279,4 +9281,33 @@
 	"asm/power/p11.h"
 	"data_export.h"
 	"data_export_to_file.h"
+
+1654584289 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\common\device\gsensor\sl_watch_pedo_kcal_wrist_sleep_sway_application.c
+	"gSensor/gSensor_manage.h"
+	"gSensor/SL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Algorithm.h"
+	"printf.h"
+	"usart.h"
+
+1653552009 e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\common\device\gsensor\sl_watch_pedo_kcal_wrist_sleep_sway_algorithm.h
+	<stdlib.h>
+	<typedef.h>
+
+1654514996 source:e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\common\device\hr_sensor\bd_health_math.c
+	"app_config.h"
+	"os/os_api.h"
+	"asm/clock.h"
+	"system/timer.h"
+	"asm/cpu.h"
+	"generic/typedef.h"
+	"generic/gpio.h"
+	"debug.h"
+	"hrs3603.h"
+	"hrSensor_manage.h"
+	"system/os/os_api.h"
+	"printf.h"
+	<stdint.h>
+	<stdlib.h>
+	"hr_sensor/BD_health_math.h"
+
+1653123466 e:\5.21-testsdk_demo\6.11_tease_code\701n_watch_release_v1.0.2\sdk\apps\common\device\hr_sensor\bd_health_math.h
 

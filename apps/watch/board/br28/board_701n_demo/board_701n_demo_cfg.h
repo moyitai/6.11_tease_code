@@ -636,14 +636,15 @@ DAC硬件上的连接方式,可选的配置：
 //*********************************************************************************//
 //                                  hr-sensor配置                                   //
 //*********************************************************************************//
-#define TCFG_HR_SENSOR_ENABLE                     0     //hrSensor使能
+#define TCFG_HR_SENSOR_ENABLE                     1     //hrSensor使能
 #define TCFG_P11HR_SENSOR_ENABLE                  0     //使用p11 sensor hub,iic 等具体参数在具体工程配置
-#define TCFG_SPO2_SENSOR_ENABLE					  0   	//SPO2sensor使能
+#define TCFG_SPO2_SENSOR_ENABLE					  1   	//SPO2sensor使能
 #define TCFG_HRS3300_EN                           0
 #define TCFG_HRS3603_EN				 			  0
+#define TCFG_HRS1662_EN				 			  1
 #define TCFG_HR_SENOR_USER_IIC_TYPE               0     //0:软件IIC  1:硬件IIC
-#define TCFG_HR_SENOR_USER_IIC_INDEX              0     //IIC  序号
-#define TCFG_HR_SENOR_NAME                        "p11hrsensor"     //传感器名称 需要和宏匹配
+#define TCFG_HR_SENOR_USER_IIC_INDEX              1     //IIC  序号
+#define TCFG_HR_SENOR_NAME                        "hx1662"     //传感器名称 需要和宏匹配
 
 //*********************************************************************************//
 //                                  g-sensor配置                                   //

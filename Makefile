@@ -278,6 +278,7 @@ c_SRC_FILES := \
 	apps/common/device/hr_sensor/hrSensor_manage.c \
 	apps/common/device/hr_sensor/hrs3300.c \
 	apps/common/device/hr_sensor/hrs3603.c \
+	apps/common/device/hr_sensor/BD_health_math.c \
 	apps/common/device/hr_sensor/p11_hrsensor.c \
 	apps/common/device/key/adkey.c \
 	apps/common/device/key/iokey.c \
@@ -929,6 +930,7 @@ LFLAGS := \
 	cpu/br28/liba/font_new.a \
 	cpu/br28/liba/res_new.a \
 	cpu/br28/liba/ui_flash_vm.a \
+	cpu/br28/liba/libbd166xbpmsdk.a \
 	--end-group \
 	-Tcpu/br28/sdk.ld \
 	-M=cpu/br28/tools/sdk.map \
