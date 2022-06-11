@@ -1589,10 +1589,43 @@ static int WATCH_ontouch(void *_ctrl, struct element_touch_event *e)
 
     return false;
 }
-
+static int watch_page_onkey(void *ctr, struct element_key_event *e)
+{
+    struct layout *layout = (struct layout *)ctr;
+    char CurrDailStyle = watch_get_style();
+    printf("watch_get_items_num = %d ", watch_get_items_num());
+    switch (e->value)
+    {
+        case KEY_OK:
+            printf("skey_ok\n");
+            break;
+        case KEY_UI_MINUS:
+            if(++CurrDailStyle > watch_get_items_num()-1)
+            {
+                CurrDailStyle = 0; //循环
+            }
+            printf("CurrDailStyle %d\n", CurrDailStyle);
+            watch_set_style(CurrDailStyle);
+            UI_HIDE_CURR_WINDOW();
+            UI_SHOW_WINDOW(PAGE_0);
+            printf("skey_down out\n");
+            break;
+        case KEY_UI_PLUS:
+        printf("CurrDailStyle %d\n", CurrDailStyle);
+        if(--CurrDailStyle < 0){ CurrDailStyle = watch_get_items_num()-1; }
+            watch_set_style(CurrDailStyle);
+            UI_HIDE_CURR_WINDOW();
+            UI_SHOW_WINDOW(PAGE_0);
+            printf("skey_up out\n");
+            break;
+            default:
+            return false;
+        }
+        return false;
+}
 REGISTER_UI_EVENT_HANDLER(STYLE_DIAL_ID(WATCH))
 .onchange = WATCH_onchange,
- .onkey = NULL,
+ .onkey = watch_page_onkey,//NULL,
   .ontouch = WATCH_ontouch,
 };
 
