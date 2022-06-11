@@ -18,6 +18,7 @@
 #include "asm/math_fast_function.h"
 #include "ui/result_pic_index.h"
 #include "ui/result_str_index.h"
+#include "gSensor/SL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Algorithm.h"
 #include "hrSensor_manage.h"
 
 #if TCFG_UI_ENABLE && (!TCFG_LUA_ENABLE)
@@ -104,6 +105,7 @@ struct progress_record_priv progress_record = {
     .target_times = 12,
 };
 
+static unsigned int step_not_clear;
 static void NUM_BLUE_timer(void *priv)
 {
     static int last_percent = 0;
@@ -115,28 +117,17 @@ static void NUM_BLUE_timer(void *priv)
         return ;
     }
     ui_io_set(IO_FRAME, HIGH);
-
-    this->steps++;
-    if (this->steps > 1000) {
-        this->steps = 0;
-    }
-
+	this->steps=get_step_count();
+   	step_not_clear=get_step_count();
     n.type = TYPE_NUM;
     n.numbs = 1;
-    n.number[0] = this->steps;
-    ui_number_update_by_id(NUM_BLUE, &n);
-    percent = this->steps * 100 / this->target_steps;
-    if (last_percent != percent) {
-        ui_multiprogress_set_persent_by_id(MULTI_PROGRESS, percent);
-        last_percent = percent;
-    }
+    n.number[0] = step_not_clear;
+    ui_number_update_by_id(NUM_BLUE, &n);//刷新
+    percent = step_not_clear * 100 / this->target_steps;
+    ui_multiprogress_set_persent_by_id(MULTI_PROGRESS, percent);
 
     ui_io_set(IO_FRAME, LOW);
 }
-
-
-
-
 
 static int NUM_BLUE_onchange(void *_number, enum element_change_event event, void *arg)
 {
@@ -149,14 +140,10 @@ static int NUM_BLUE_onchange(void *_number, enum element_change_event event, voi
         number->number[0] = progress_record.steps;
 
         if (!watch_num_blue_timer) {
-            watch_num_blue_timer = sys_timer_add(&progress_record, NUM_BLUE_timer, 1000);
+            watch_num_blue_timer = sys_timer_add(&progress_record, NUM_BLUE_timer, 500);
         }
         break;
     case ON_CHANGE_RELEASE:
-        if (watch_num_blue_timer) {
-            sys_timer_del(watch_num_blue_timer);
-            watch_num_blue_timer = 0;
-        }
         break;
     default:
         return FALSE;
