@@ -492,15 +492,26 @@ LCD_SPI_PLATFORM_DATA_BEGIN(lcd_spi_data)
 
 #if TCFG_LCD_MCU_JD5858_ZHAOYU_ENABLE
     .pin_reset= IO_PORTA_02,
-    .pin_cs	= IO_PORTA_07,
-    .pin_dc	= IO_PORTG_08,
+    .pin_cs	= IO_PORTA_06,
+    .pin_dc	= IO_PORTA_07,
     .pin_te = IO_PORTA_03,
     .pin_en	= NO_CONFIG_PORT,
     .pin_bl = TCFG_BACKLIGHT_PWM_IO,
     .mcu_pins = {
         .pin_wr = PIN_SYNC1_PA5,
-        .pin_rd = PIN_SYNC2_PA6,
+        .pin_rd = PIN_SYNC0_PA4,
     },
+
+    // .pin_reset= IO_PORTA_02,
+    // .pin_cs	= IO_PORTA_07,
+    // .pin_dc	= IO_PORTG_08,
+    // .pin_te = IO_PORTA_03,
+    // .pin_en	= NO_CONFIG_PORT,
+    // .pin_bl = TCFG_BACKLIGHT_PWM_IO,
+    // .mcu_pins = {
+    //     .pin_wr = PIN_SYNC1_PA5,
+    //     .pin_rd = PIN_SYNC2_PA6,
+    // },
 #endif
 
 #if (TCFG_TFT_LCD_DEV_SPI_HW_NUM == 1)
@@ -531,12 +542,12 @@ const struct soft_iic_config soft_iic_cfg[] = {
         .delay = TCFG_SW_I2C0_DELAY_CNT,                //软件IIC延时参数，影响通讯时钟频率
         .io_pu = 1,                                     //是否打开上拉电阻，如果外部电路没有焊接上拉电阻需要置1
     },
-#if 0
+#if 1
     //iic1 data
     {
-        .scl = IO_PORTA_05,
-        .sda = IO_PORTA_06,
-        .delay = 50,
+        .scl = IO_PORTB_04,
+        .sda = IO_PORTB_05,
+        .delay = TCFG_SW_I2C0_DELAY_CNT,
         .io_pu = 1,
     },
 #endif
@@ -545,9 +556,13 @@ const struct soft_iic_config soft_iic_cfg[] = {
 u32 soft_iic_real_delay[] = {
     //iic0 data
     TCFG_SW_I2C0_DELAY_CNT,
-#if 0
+#if 1
     //iic1 data
-    50,
+    TCFG_SW_I2C0_DELAY_CNT,
+#endif
+#if 1
+    //iic1 data
+    TCFG_SW_I2C0_DELAY_CNT,
 #endif
 };
 
@@ -706,7 +721,7 @@ SD0_PLATFORM_DATA_END()
 #if (TCFG_HR_SENSOR_ENABLE||TCFG_SPO2_SENSOR_ENABLE)
 
 HRSENSOR_PLATFORM_DATA_BEGIN(hrSensor_data)
-    .iic = 0,//TCFG_HR_SENOR_USER_IIC_INDEX ,
+    .iic = 1,//TCFG_HR_SENOR_USER_IIC_INDEX ,
     .hrSensor_name = TCFG_HR_SENOR_NAME,
 HRSENSOR_PLATFORM_DATA_END()
 
@@ -916,7 +931,7 @@ struct port_wakeup port2 = {
     .edge               = FALLING_EDGE,                      //唤醒方式选择,可选：上升沿\下降沿
     .both_edge          = 0,
     .filter             = PORT_FLT_8ms,
-    .iomap              = TCFG_IOKEY0,                    //唤醒口选择
+    .iomap              = TCFG_IOKEY1,                    //唤醒口选择
 };
 #endif
 
@@ -1345,7 +1360,7 @@ void board_set_soft_poweroff(void)
 
 	//power按键
 #if TCFG_IOKEY_ENABLE
-    port_protect(port_group, TCFG_IOKEY0);
+    port_protect(port_group, TCFG_IOKEY1);
 #endif
 
 #if TCFG_UMIDIGI_BOX_ENABLE

@@ -230,10 +230,10 @@
 //*********************************************************************************//
 //                                 rdec_key 配置                                      //
 //*********************************************************************************//
-#define TCFG_RDEC_KEY_ENABLE					DISABLE_THIS_MOUDLE //是否使能RDEC按键
+#define TCFG_RDEC_KEY_ENABLE					ENABLE_THIS_MOUDLE //是否使能RDEC按键
 //RDEC0配置
-#define TCFG_RDEC0_ECODE1_PORT					IO_PORTA_12
-#define TCFG_RDEC0_ECODE2_PORT					IO_PORTA_13
+#define TCFG_RDEC0_ECODE1_PORT					IO_PORTB_09//IO_PORTA_12
+#define TCFG_RDEC0_ECODE2_PORT					IO_PORTC_07//IO_PORTA_13
 #define TCFG_RDEC0_KEY0_VALUE 				 	0
 #define TCFG_RDEC0_KEY1_VALUE 				 	1
 
@@ -442,9 +442,9 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_LCD_SPI_ST7789V_ENABLE         DISABLE_THIS_MOUDLE
 #define TCFG_LCD_SPI_ST7789_BOE1_54_ENABLE  DISABLE_THIS_MOUDLE
 #define TCFG_LCD_SPI_RM69330_ENABLE         DISABLE_THIS_MOUDLE
-#define TCFG_LCD_SPI_SH8601A_ENABLE         ENABLE_THIS_MOUDLE
+#define TCFG_LCD_SPI_SH8601A_ENABLE         0//ENABLE_THIS_MOUDLE
 #define TCFG_LCD_MCU_JD5858_ENABLE          DISABLE_THIS_MOUDLE
-#define TCFG_LCD_MCU_JD5858_ZHAOYU_ENABLE   DISABLE_THIS_MOUDLE
+#define TCFG_LCD_MCU_JD5858_ZHAOYU_ENABLE   1//DISABLE_THIS_MOUDLE
 #define TCFG_LCD_RGB_ST7789V_ENABLE         DISABLE_THIS_MOUDLE
 #define TCFG_LCD_ST7789VW_ENABLE	        DISABLE_THIS_MOUDLE
 #define TCFG_LCD_OLED_ENABLE	            DISABLE_THIS_MOUDLE
@@ -636,19 +636,20 @@ DAC硬件上的连接方式,可选的配置：
 //*********************************************************************************//
 //                                  hr-sensor配置                                   //
 //*********************************************************************************//
-#define TCFG_HR_SENSOR_ENABLE                     0     //hrSensor使能
+#define TCFG_HR_SENSOR_ENABLE                     1     //hrSensor使能
 #define TCFG_P11HR_SENSOR_ENABLE                  0     //使用p11 sensor hub,iic 等具体参数在具体工程配置
-#define TCFG_SPO2_SENSOR_ENABLE					  0   	//SPO2sensor使能
+#define TCFG_SPO2_SENSOR_ENABLE					  1   	//SPO2sensor使能
 #define TCFG_HRS3300_EN                           0
 #define TCFG_HRS3603_EN				 			  0
+#define TCFG_HRS1662_EN				 			  1
 #define TCFG_HR_SENOR_USER_IIC_TYPE               0     //0:软件IIC  1:硬件IIC
-#define TCFG_HR_SENOR_USER_IIC_INDEX              0     //IIC  序号
-#define TCFG_HR_SENOR_NAME                        "p11hrsensor"     //传感器名称 需要和宏匹配
+#define TCFG_HR_SENOR_USER_IIC_INDEX              1     //IIC  序号
+#define TCFG_HR_SENOR_NAME                        "hx1662"     //传感器名称 需要和宏匹配
 
 //*********************************************************************************//
 //                                  g-sensor配置                                   //
 //*********************************************************************************//
-#define TCFG_GSENSOR_ENABLE                       0    //gSensor使能
+#define TCFG_GSENSOR_ENABLE                       1    //gSensor使能
 #define TCFG_DA230_EN                             0
 #define TCFG_SC7A20_EN                            0
 #define TCFG_P11GSENSOR_EN                        0    //使用p11 sensor hub
@@ -658,8 +659,8 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_MC3433_EN							  0
 #define TCFG_MPU6050_EN							  0
 #define TCFG_GSENOR_USER_IIC_TYPE                 0     //0:软件IIC  1:硬件IIC
-#define TCFG_GSENOR_USER_IIC_INDEX                0     //IIC 序号
-#define TCFG_GSENSOR_NAME                         "p11gsensor"     //传感器名称 需要和宏开关匹配
+#define TCFG_GSENOR_USER_IIC_INDEX                1     //IIC 序号
+#define TCFG_GSENSOR_NAME                        "sc7a20"     //传感器名称 需要和宏开关匹配
 #define TCFG_GSENSOR_DETECT_IO                    (-1) //传感器中断io
 
 //*********************************************************************************//

@@ -82,7 +82,24 @@ static void get_sys_info(void *priv, u8 OpCode, u8 OpCode_SN, u8 *data, u16 len)
 static void set_sys_info(void *priv, u8 OpCode, u8 OpCode_SN, u8 *data, u16 len)
 {
     ASSET_CMD_DATA_LEN(len, 1);
-
+    struct smartbox *smart = smartbox_handle_get();
+    if(smart->A_platform == 1 && (data[1] == 2) )
+    {
+        printf("ios iiiiiiiiooooooossssssss");
+        u8 tem  = data[5];
+        data[0] = 02;
+        data[1] = 8;
+        data[2] = 06;
+        data[3] = 01;
+        data[4] = 00;
+        data[5] = 00;
+        data[6] = 00;
+        data[7] = 00;
+        data[8] = 00;
+        data[9] = tem;
+    }else{
+    printf("andrive");
+    }
     u8 function = data[0];
     bool ret = smartbox_function_set(priv, function, data + 1, len - 1);
     if (ret == true) {

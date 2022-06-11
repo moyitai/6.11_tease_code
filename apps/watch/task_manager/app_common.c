@@ -238,7 +238,14 @@ int app_common_key_msg_deal(struct sys_event *event)
         break;
     case KEY_UI_SHORTCUT:
         log_info("  KEY_UI_SHORTCUT  \n");
-        if ((sport_status != 4) & (sport_status != 0)) {
+        if (lcd_sleep_status()) {
+            log_info("  KEY_UI_SHORTCUT===open  \n");
+            ui_backlight_open(0);
+        }else{
+            log_info("  KEY_UI_SHORTCUT===close \n");
+            ui_backlight_close();
+        }
+        /*if ((sport_status != 4) & (sport_status != 0)) {
             break;
         } else {
             if (ID_WINDOW_SPORT_SHOW == ui_get_current_window_id()) {
@@ -247,7 +254,7 @@ int app_common_key_msg_deal(struct sys_event *event)
             }
             extern u8 ui_show_shortcut_key();
             ui_show_shortcut_key();
-        }
+        }*/
         break;
     case KEY_UI_POWEROFF:
         log_info("  KEY_UI_POWEROFF  \n");

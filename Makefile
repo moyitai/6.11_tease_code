@@ -270,6 +270,7 @@ c_SRC_FILES := \
 	apps/common/device/bmp280/bmp280.c \
 	apps/common/device/detection.c \
 	apps/common/device/gSensor/SC7A20.c \
+	apps/common/device/gSensor/SL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Application.c \
 	apps/common/device/gSensor/gSensor_manage.c \
 	apps/common/device/gSensor/mc3433.c \
 	apps/common/device/gSensor/mpu6050.c \
@@ -277,6 +278,7 @@ c_SRC_FILES := \
 	apps/common/device/hr_sensor/hrSensor_manage.c \
 	apps/common/device/hr_sensor/hrs3300.c \
 	apps/common/device/hr_sensor/hrs3603.c \
+	apps/common/device/hr_sensor/BD_health_math.c \
 	apps/common/device/hr_sensor/p11_hrsensor.c \
 	apps/common/device/key/adkey.c \
 	apps/common/device/key/iokey.c \
@@ -913,6 +915,7 @@ LFLAGS := \
 	cpu/br28/liba/HeartRate_Calc.a \
 	cpu/br28/liba/sedentary.a \
 	cpu/br28/liba/SPO2.a \
+	cpu/br28/liba/libSL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Algorithm.a \
 	cpu/br28/liba/libFFT_pi32v2_OnChip.a \
 	cpu/br28/liba/wtg_dec_lib.a \
 	cpu/br28/liba/bfilterfun_lib.a \
@@ -927,6 +930,7 @@ LFLAGS := \
 	cpu/br28/liba/font_new.a \
 	cpu/br28/liba/res_new.a \
 	cpu/br28/liba/ui_flash_vm.a \
+	cpu/br28/liba/libbd166xbpmsdk.a \
 	--end-group \
 	-Tcpu/br28/sdk.ld \
 	-M=cpu/br28/tools/sdk.map \

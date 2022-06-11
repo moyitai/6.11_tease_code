@@ -18,6 +18,8 @@
 #include "asm/math_fast_function.h"
 #include "ui/result_pic_index.h"
 #include "ui/result_str_index.h"
+#include "gSensor/SL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Algorithm.h"
+#include "hrSensor_manage.h"
 
 #if TCFG_UI_ENABLE && (!TCFG_LUA_ENABLE)
 #ifdef CONFIG_UI_STYLE_JL_ENABLE
@@ -103,6 +105,7 @@ struct progress_record_priv progress_record = {
     .target_times = 12,
 };
 
+static unsigned int step_not_clear;
 static void NUM_BLUE_timer(void *priv)
 {
     static int last_percent = 0;
@@ -114,28 +117,17 @@ static void NUM_BLUE_timer(void *priv)
         return ;
     }
     ui_io_set(IO_FRAME, HIGH);
-
-    this->steps++;
-    if (this->steps > 1000) {
-        this->steps = 0;
-    }
-
+	this->steps=get_step_count();
+   	step_not_clear=get_step_count();
     n.type = TYPE_NUM;
     n.numbs = 1;
-    n.number[0] = this->steps;
-    ui_number_update_by_id(NUM_BLUE, &n);
-    percent = this->steps * 100 / this->target_steps;
-    if (last_percent != percent) {
-        ui_multiprogress_set_persent_by_id(MULTI_PROGRESS, percent);
-        last_percent = percent;
-    }
+    n.number[0] = step_not_clear;
+    ui_number_update_by_id(NUM_BLUE, &n);//刷新
+    percent = step_not_clear * 100 / this->target_steps;
+    ui_multiprogress_set_persent_by_id(MULTI_PROGRESS, percent);
 
     ui_io_set(IO_FRAME, LOW);
 }
-
-
-
-
 
 static int NUM_BLUE_onchange(void *_number, enum element_change_event event, void *arg)
 {
@@ -148,14 +140,10 @@ static int NUM_BLUE_onchange(void *_number, enum element_change_event event, voi
         number->number[0] = progress_record.steps;
 
         if (!watch_num_blue_timer) {
-            watch_num_blue_timer = sys_timer_add(&progress_record, NUM_BLUE_timer, 1000);
+            watch_num_blue_timer = sys_timer_add(&progress_record, NUM_BLUE_timer, 500);
         }
         break;
     case ON_CHANGE_RELEASE:
-        if (watch_num_blue_timer) {
-            sys_timer_del(watch_num_blue_timer);
-            watch_num_blue_timer = 0;
-        }
         break;
     default:
         return FALSE;
@@ -332,6 +320,9 @@ static void PROGRESS_SLEEP_timer(void *priv)
     static int last_min = 0;
     static int last_percent = 0;
     int percent = 0;
+	static char sleep_hrs_result = 0;
+	static char sleep_wear_result = 0;
+	static char sleep_sec = 0;
     struct progress_sleep_priv *this = (struct progress_sleep_priv *)priv;
 
     /* if (++this->sec >= 60) { */
@@ -343,9 +334,46 @@ static void PROGRESS_SLEEP_timer(void *priv)
     /* } */
     /* } */
     /* } */
-
+	printf("PROGRESS_SLEEP_timer====");
+	if(1/*get_sleep_status()*/)
+	{
+	    printf("PROGRESS_SLEEP_timer====111");
+        #if TCFG_HRS3605_EN || TCFG_HRS1662_EN
+        if(!get_hrs_enable_status())
+		{
+			printf("PROGRESS_SLEEP_timer====222");
+			hr_sensor_io_ctl(HR_SENSOR_DISABLE, NULL);
+			hr_sensor_io_ctl(HR_SENSOR_ENABLE, NULL);
+		}
+	    sleep_hrs_result = get_hrs_results();//getCurrentHR(whr.workbuf);//实时调取心率
+	    sleep_wear_result = get_hrs_wear_results();
+        #else
+        sleep_hrs_result = 78;
+        sleep_wear_result = 1;
+        #endif
+		printf("hrs %d wear %d",sleep_hrs_result,sleep_wear_result);
+		if(sleep_wear_result)
+		{
+        
+		/*sleep_sec++;
+		if(sleep_sec>=60)
+			{
+			sleep_sec = 0;
+			//this->min++;
+		}*/
+        this->min = slight_sleep_time();
+		}
+	}
+	else{
+         #if TCFG_HRS3605_EN || TCFG_HRS1662_EN
+		if(get_hrs_enable_status()){
+		hr_sensor_io_ctl(HR_SENSOR_DISABLE, NULL);
+		}
+        #endif
+	}
     //test
-    this->min += 10;
+    //this->min += 10;
+    printf("this->min %d",this->min);
     if (this->min >= 60) {
         this->min = 0;
         this->hour++;
@@ -387,12 +415,12 @@ static void PROGRESS_SLEEP_timer(void *priv)
         last_percent = percent;
     }
 #else
+	printf("PROGRESS_SLEEP_timer====22222222222222222222");
 
     ui_update_source_by_elm(priv, 1);
 
 #endif
 }
-
 
 static int PROGRESS_SLEEP_onchange(void *ctr, enum element_change_event e, void *arg)
 {
@@ -1764,31 +1792,159 @@ REGISTER_UI_EVENT_HANDLER(PAGE_18)
 };
 
 
+static u32 MOVING_1_touch_move = 0;
 static u32 icon_tstatus = 0;
 static int startlight_page_ontouch(void *_layout, struct element_touch_event *e)
 {
     struct layout *layout = (struct layout *)_layout;
-    /* static u8 flag = 0; */
+     static u8 flag = 0; 
+    static u8 touch_action = 0;
 
     switch (e->event) {
 
     case ELM_EVENT_TOUCH_UP:
-        /* printf("stouch up\n"); */
-        /* if (flag == 1) { */
-        /* ui_hide_curr_main(); */
-        /* ui_show_main(PAGE_18); */
-        /* } */
-        /* flag = 0; */
+         printf("333stouch up %d\n",MOVING_1_touch_move); 
+         if (flag == 1) { 
+         //ui_hide_curr_main(); 
+         //ui_show_main(PAGE_18); 
+         } 
+         flag = 0; 
+     if (touch_action != 1 || MOVING_1_touch_move) {
+         MOVING_1_touch_move = 0;
+            break;
+        }
+
+
+        switch (layout->elm.id) {
+        case BASEFORM_296:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_54); 
+            } 
+            break;
+        case BASEFORM_297:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_80); 
+            } 
+            break;
+        case BASEFORM_298:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_87); 
+            } 
+            break;
+        case BASEFORM_299:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_76); 
+            } 
+            break;
+        case BASEFORM_300:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_77); 
+            } 
+            break;
+        case BASEFORM_301:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_1); 
+            } 
+            break;
+        case BASEFORM_302:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_2); 
+            } 
+            break;
+        case BASEFORM_303:
+            if (touch_action == 1) { //压力
+                //ui_hide_curr_main(); 
+                //ui_show_main(PAGE_0); 
+            } 
+            break;
+        case BASEFORM_304:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_57); 
+            } 
+            break;
+        case BASEFORM_305:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_22); 
+            } 
+            break;
+        case BASEFORM_306:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_19); 
+            } 
+            break;
+        case BASEFORM_307:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_10); 
+            } 
+            break;
+        case BASEFORM_308:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_64); 
+            } 
+            break;
+        case BASEFORM_309:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_73); 
+            } 
+            break;
+        case BASEFORM_310:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_81); 
+            } 
+            break;
+        case BASEFORM_311:
+            if (touch_action == 1) { 
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_66); 
+            } 
+            break;
+        case BASEFORM_312:
+            if (touch_action == 1) { 
+                //ui_hide_curr_main(); //卡包
+                //ui_show_main(PAGE_0); 
+            } 
+            break;
+        case BASEFORM_313:
+            if (touch_action == 1) { 
+                //ui_hide_curr_main(); //支付宝
+                //ui_show_main(PAGE_0); 
+            } 
+            break;
+        
+        case BASEFORM_314:
+            if (touch_action == 1) { //秒表
+                ui_hide_curr_main(); 
+                ui_show_main(PAGE_33); 
+            } 
+            break;
+        }
         break;
     case ELM_EVENT_TOUCH_HOLD:
-        /* printf("stouch hold\n"); */
+         printf("333stouch hold\n"); 
         break;
     case ELM_EVENT_TOUCH_MOVE:
-        /* printf("stouch move\n"); */
+        touch_action = 2;
+         printf("333stouch move\n"); 
         /* flag = 2; */
         break;
     case ELM_EVENT_TOUCH_DOWN:
-        printf("stouch down\n");
+        printf("333stouch down\n");
+        touch_action = 1;
+        //return true;
         /* flag = 1; */
         icon_tstatus = 1;
         break;
