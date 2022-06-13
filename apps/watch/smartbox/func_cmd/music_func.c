@@ -73,6 +73,7 @@ static u8 mucis_func_add_one_attr_continue(u8 *buf, u16 max_len, u8 offset, u8 t
 
 u32 music_func_get(void *priv, u8 *buf, u16 buf_size, u32 mask)
 {
+    printf("[rcsp get]%s",__func__);
     u16 offset = 0;
 #if (TCFG_APP_MUSIC_EN && !SMARTBOX_APP_MUSIC_EN)
     u8 app = app_get_curr_task();
@@ -143,6 +144,8 @@ u32 music_func_get(void *priv, u8 *buf, u16 buf_size, u32 mask)
 
 bool music_func_set(void *priv, u8 *data, u16 len)
 {
+    printf("[rcsp set]%s",__func__);
+    put_buf(data,len);
     /* printf("%s, %d\n", __func__, data[0]); */
 #if (TCFG_APP_MUSIC_EN && !SMARTBOX_APP_MUSIC_EN)
     switch (data[0]) {

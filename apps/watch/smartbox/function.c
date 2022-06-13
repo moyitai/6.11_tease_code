@@ -51,24 +51,24 @@ struct _DEV_info {
 typedef bool (*func_set)(void *priv, u8 *data, u16 len);
 typedef u32(*func_get)(void *priv, u8 *buf, u16 buf_size, u32 mask);
 static const func_set set_tab[FUNCTION_MASK_MAX] = {
-    [BT_FUNCTION_MASK] = bt_func_set,
+    [BT_FUNCTION_MASK] = bt_func_set, //蓝牙设置
 #if (SMART_BOX_EN && TCFG_APP_MUSIC_EN)
-    [MUSIC_FUNCTION_MASK] = music_func_set,
+    [MUSIC_FUNCTION_MASK] = music_func_set,//音乐设置
 #endif /* #if (SMART_BOX_EN && TCFG_APP_MUSIC_EN) */
-    [RTC_FUNCTION_MASK] = rtc_func_set,
-    [LINEIN_FUNCTION_MASK] = linein_func_set,
-    [FM_FUNCTION_MASK] = fm_func_set,
+    [RTC_FUNCTION_MASK] = rtc_func_set,//时钟设置
+    [LINEIN_FUNCTION_MASK] = linein_func_set,//插线设置
+    [FM_FUNCTION_MASK] = fm_func_set,//电台设置
     [FMTX_FUNCTION_MASK] = NULL,
 };
 
 static const func_get get_tab[FUNCTION_MASK_MAX] = {
-    [BT_FUNCTION_MASK] = bt_func_get,
+    [BT_FUNCTION_MASK] = bt_func_get,//蓝牙功能获取
 #if (SMART_BOX_EN && TCFG_APP_MUSIC_EN)
-    [MUSIC_FUNCTION_MASK] = music_func_get,
+    [MUSIC_FUNCTION_MASK] = music_func_get,//音乐功能获取
 #endif /* #if (SMART_BOX_EN && TCFG_APP_MUSIC_EN) */
-    [RTC_FUNCTION_MASK] = rtc_func_get,
-    [LINEIN_FUNCTION_MASK] = linein_func_get,
-    [FM_FUNCTION_MASK] = fm_func_get,
+    [RTC_FUNCTION_MASK] = rtc_func_get,//获取rtc 时钟
+    [LINEIN_FUNCTION_MASK] = linein_func_get,//获取插线设置
+    [FM_FUNCTION_MASK] = fm_func_get,//获取电台设置
     [FMTX_FUNCTION_MASK] = NULL,
 };
 
@@ -507,6 +507,9 @@ static u32 smartbox_common_function_get(void *priv, u8 *buf, u16 buf_size, u32 m
 
 bool smartbox_function_set(void *priv, u8 function, u8 *data, u16 len)
 {
+    printf("ios go in 4 %d",function);
+    printf("[rcsp set]%s %d",__func__,function);
+    put_buf(data,len);
     if (function >= FUNCTION_MASK_MAX) {
         if (function == COMMON_FUNCTION) {
             return smartbox_common_function_set(priv, data, len);
