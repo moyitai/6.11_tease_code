@@ -2,7 +2,8 @@
 #include "gSensor/gSensor_manage.h"
 #include "gSensor/SL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Algorithm.h"
 #include "printf.h"
-
+#include "watch_api.h"
+#include "sport_data/watch_common.h"
 u8  volatile  gsensor_sc7a20_timer_en = 1;
 static unsigned int gsensor_sc7a20_get_timer_500 = 0;
 unsigned char sl_sleep_sys_hour;
@@ -89,6 +90,9 @@ signed short                 hp_buf[16];
 
 static signed char sl_init_status=0x00;
 /**Please modify the following parameters according to the actual situation**/
+//Personal_inf *sc701;
+//extern int get_personal_info_ppp_myself(Personal_inf *sc701);
+ unsigned char sl_person_para[4] = {0};
 signed char SL_SC7A20_PEDO_KCAL_WRIST_SLEEP_SWAY_INIT(void)
 {
 	printf("%s\n",__func__);
@@ -97,7 +101,21 @@ signed char SL_SC7A20_PEDO_KCAL_WRIST_SLEEP_SWAY_INIT(void)
 	unsigned char sl_version_value=0x00;
 #endif
 //	bool  fifo_status       =0;
-	unsigned char  sl_person_para[4] ={178,60,26,1};//个人信息参数
+	if(get_person_swich1() == 1)
+	{
+		sl_person_para[0] = get_height1_info_person();//身高
+		sl_person_para[1] = get_weight1_info_person();//体重
+		sl_person_para[2] = get_age1_info_person();//年龄
+		sl_person_para[3] = get_gender1_info_person();//性别
+		//printf("bbbbbbbbbbbbbbbbbbbb1111111%d %d %d %d ",get_height1_info_person(),get_weight1_info_person(),get_age1_info_person(),get_gender1_info_person());
+	}else if(get_person_swich1() == 2){
+		sl_person_para[0] = get_height_info_person();
+		sl_person_para[1] = get_weight_info_person();
+		sl_person_para[2] = get_age_info_person();
+		sl_person_para[3] = get_gender_info_person();
+		//printf("aaaaaaaaaaaaaaaaaaa222%d %d %d %d ",get_height_info_person(),get_weight_info_person(),get_age_info_person(),get_gender_info_person());
+	}
+	//unsigned char  sl_person_para[4] ={170,60,22,1};
 	unsigned char  Turn_Wrist_Para[2]={1,3,1};//refer pdf
 
 #if SL_Sensor_Algo_Release_Enable==0x00
@@ -130,7 +148,7 @@ signed char SL_SC7A20_PEDO_KCAL_WRIST_SLEEP_SWAY_INIT(void)
     /**********set int para*******************/
     SL_PEDO_INT_SET(2,1,0);//0 or 1 sleep is different
 	/**********set motion para****************/
-	SL_Pedo_Person_Inf_Init(&sl_person_para[0]);//personal para init
+	SL_Pedo_Person_Inf_Init(&sl_person_para);//personal para init
     /**********set turn wrist para************/
     SL_Turn_Wrist_Init(&Turn_Wrist_Para);
     /**********set sleep sensitivity**********/
@@ -401,7 +419,7 @@ char sc7A20_driver_init(void)
 	if(ret==38){
 		sc7a20_500ms_timer_cfg(true);
 		printf("timer==is===start");
-		return 0;
+		return 1;
 	}else printf("sc7A20_driver_init fail??? ");
 
 }
@@ -416,6 +434,7 @@ void gsensor_sc7a20_ctl(u8 cmd, void *arg)
         break;
     case GSENSOR_RESET_INT:
         res = sc7A20_driver_init();
+		printf("GSENSOR_RESET_INT ooo");
         memcpy(arg, &res, 1);
         break;
     case GSENSOR_RESUME_INT:
@@ -429,6 +448,7 @@ void gsensor_sc7a20_ctl(u8 cmd, void *arg)
         break;
     case SEARCH_SENSOR:
         res = sc7A20_driver_init();
+		printf("SEARCH_SENSORppp");
         memcpy(arg, &res, 1);
         break;
     default:

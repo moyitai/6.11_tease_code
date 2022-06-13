@@ -6,11 +6,17 @@
 #include "sport_info_bt_disconn.h"
 
 #if (SMART_BOX_EN && JL_SMART_BOX_SENSORS_DATA_OPT)
-
+static u8 get_bt_reminder;
+u8 is_bt_reminder(void)
+{
+return get_bt_reminder;
+}
 void sport_info_bt_disconn_attr_set(void *priv, u8 attr, u8 *data, u16 len)
 {
     u8 bt_reminder_switch = data[0];
     u8 bt_reminder_mode = data[1];
+    get_bt_reminder = bt_reminder_switch;
+    printf("%s %d %d===",__func__,bt_reminder_switch,bt_reminder_mode);
     sport_info_switch_record_update(SPORT_INFO_SWTICH_TYPE_BT_DISCONN, bt_reminder_switch, 1);
     sport_info_mode_record_update(SPORT_INFO_MODE_TYPE_BT_DISCONN, bt_reminder_mode);
 }

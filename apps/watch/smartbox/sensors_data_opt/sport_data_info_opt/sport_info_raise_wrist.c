@@ -20,6 +20,7 @@ enum {
 void sport_info_raise_wrist_attr_set(void *priv, u8 attr, u8 *data, u16 len)
 {
     printf("%s", __func__);
+    put_buf(data,len);
     u8 raise_wrist_switch = data[0];
     u8 raise_wrist_mode = data[1];
 
@@ -50,7 +51,7 @@ void sport_info_raise_wrist_attr_set(void *priv, u8 attr, u8 *data, u16 len)
 u32 sport_info_raise_wrist_attr_get(void *priv, u8 attr, u8 *buf, u16 buf_size, u32 offset)
 {
     u32 rlen = 0;
-
+    printf("%s", __func__);
     u8 raise_wrist_data[2 + 4] = {0};
     if (sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_RAISE_WRIST)) {
         raise_wrist_data[0] = SPORT_INFO_RAISE_WRIST_TURN_ON_ALL_DATA;

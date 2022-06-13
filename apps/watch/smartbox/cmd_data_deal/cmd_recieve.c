@@ -284,6 +284,8 @@ static void smartbox_device_parm_extra(void *priv, u8 OpCode, u8 OpCode_SN, u8 *
 }
 void cmd_recieve(void *priv, u8 OpCode, u8 OpCode_SN, u8 *data, u16 len)
 {
+    printf("%s OpCode = %d OpCode_SN = %d",__func__,OpCode,OpCode_SN);
+    put_buf(data,len);
     switch (OpCode) {
     case JL_OPCODE_GET_TARGET_FEATURE:
         get_target_feature(priv, OpCode, OpCode_SN, data, len);

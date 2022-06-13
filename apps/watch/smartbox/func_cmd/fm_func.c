@@ -92,8 +92,9 @@ static void fm_scan_state_func(void *priv)
 
 bool fm_func_set(void *priv, u8 *data, u16 len)
 {
-    /* printf("fm_func_set\n"); */
-    /* put_buf(data, len); */
+
+    printf("[rcsp set]%s",__func__);
+    put_buf(data,len);
     u8 fun_cmd = data[0];
     u16 cmd_param = 0;
     u16 param_len = len - 1;
@@ -199,6 +200,7 @@ bool fm_func_set(void *priv, u8 *data, u16 len)
 
 u32 fm_func_get(void *priv, u8 *buf, u16 buf_size, u32 mask)
 {
+    printf("[rcsp get]%s",__func__);
     u16 offset  = 0;
     if (mask & BIT(FM_INFO_ATTR_STATUS)) {
         extern u8 fm_get_cur_channel(void);

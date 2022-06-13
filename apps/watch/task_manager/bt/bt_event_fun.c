@@ -1411,7 +1411,8 @@ void bt_status_disconnect(struct bt_event *bt)
 
     bt_set_led_status(STATUS_BT_DISCONN);
 #if(TCFG_BD_NUM == 2)               //对耳在bt_tws同步播放提示音
-    if (!app_var.goto_poweroff_flag) { /*关机不播断开提示音*/
+printf("===========bt_disconnect");
+    if (!app_var.goto_poweroff_flag && is_bt_reminder()) { /*关机不播断开提示音*/
         if (!__this->ignore_discon_tone) {
             tone_play_by_path(tone_table[IDEX_TONE_BT_DISCONN], 1);
         }

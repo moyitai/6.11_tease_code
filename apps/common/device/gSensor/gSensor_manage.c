@@ -336,17 +336,20 @@ int gsensor_enable(void)
 #if(!TCFG_P11GSENSOR_EN)
     //查找设备
     gSensor_hdl->gravity_sensor_ctl(SEARCH_SENSOR, &valid);
+    printf("gsensor_enable111 = %d",valid);
     if (valid == 0) {
         return -1;
+         printf("gsensor_enable 111 ");
     }
     //工作空间
     data_buf = zalloc(BUF_SIZE);
     if (data_buf == NULL) {
-        printf("gsensor_cbuf_error!");
+        printf("gsensor_cbuf_error 333!");
         return -1;
     }
     data_w_cbuf = zalloc(sizeof(cbuffer_t));
     if (data_w_cbuf == NULL) {
+        printf("gsensor_enable 222 ");
         return -1;
     }
     cbuf_init(data_w_cbuf, data_buf, BUF_SIZE);

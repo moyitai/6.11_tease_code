@@ -18,6 +18,8 @@
 
 bool linein_func_set(void *priv, u8 *data, u16 len)
 {
+    printf("[rcsp set]%s",__func__);
+    put_buf(data,len);
     if (0 != tone_get_status()) {
         return true;
     }
@@ -35,6 +37,7 @@ bool linein_func_set(void *priv, u8 *data, u16 len)
 
 u32 linein_func_get(void *priv, u8 *buf, u16 buf_size, u32 mask)
 {
+    printf("[rcsp get]%s",__func__);
     u16 offset = 0;
     if (mask & BIT(LINEIN_INFO_ATTR_STATUS)) {
         u8 status = linein_get_status();

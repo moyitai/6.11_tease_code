@@ -12,6 +12,8 @@
 
 bool bt_func_set(void *priv, u8 *data, u16 len)
 {
+    printf("[rcsp set]%s",__func__);
+    put_buf(data,len);
 #if RCSP_ADV_MUSIC_INFO_ENABLE
     music_info_cmd_handle(data, len);
 #endif
@@ -20,6 +22,7 @@ bool bt_func_set(void *priv, u8 *data, u16 len)
 
 u32 bt_func_get(void *priv, u8 *buf, u16 buf_size, u32 mask)
 {
+    printf("[rcsp get]%s",__func__);
     u16 offset = 0;
     u16 music_sec = 0;
     u32 curr_music_sec = 0;

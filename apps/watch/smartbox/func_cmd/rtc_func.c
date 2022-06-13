@@ -311,6 +311,7 @@ static u8 smartbox_rtc_play_dev_ring(PT_ALARM_APP_RING_AUDITION ring_param)
 static u8 smart_rtc_ring_audition_deal(PT_ALARM_APP_RING_AUDITION ring_param)
 {
     u8 ret = 0;
+    printf("%s",__func__);
     printf("ring stop");
     tone_play_stop();
 #if TCFG_APP_MUSIC_EN
@@ -333,6 +334,8 @@ static u8 smart_rtc_ring_audition_deal(PT_ALARM_APP_RING_AUDITION ring_param)
 
 static u8 smart_rtc_ring_audition_prepare(void *priv, u8 *data, u16 len)
 {
+    printf("%s",__func__);
+    put_buf(data,len);
     u8 ret = 0;
     struct smartbox *smart = (struct smartbox *)priv;
     g_ring_audition.ring_op = data[0];
@@ -341,6 +344,7 @@ static u8 smart_rtc_ring_audition_prepare(void *priv, u8 *data, u16 len)
         // 回到原来的模式
         file_trans_idle_set(1);
         if ((u8) - 1 != g_ring_audition.prev_app_mode) {
+            printf("g_ring_audition.prev_app_mode != -1");
             smartbox_msg_post(USER_MSG_SMARTBOX_MODE_SWITCH, 2, (int)smart, g_ring_audition.prev_app_mode);
             g_ring_audition.prev_app_mode = -1;
         } else {
@@ -352,6 +356,7 @@ static u8 smart_rtc_ring_audition_prepare(void *priv, u8 *data, u16 len)
         g_ring_audition.ring_type = data[1];
         g_ring_audition.ring_dev = data[2];
         g_ring_audition.ring_clust = READ_BIG_U32(data + 3);
+        printf("smart->cur_app_mode = %d %d %d %d %d",smart->cur_app_mode,data[0],data[1],data[2],data[3]);
         // 进入rtc模式
         if (RTC_FUNCTION != smart->cur_app_mode) {
             g_ring_audition.prev_app_mode = smart->cur_app_mode;
@@ -367,6 +372,8 @@ static u8 smart_rtc_ring_audition_prepare(void *priv, u8 *data, u16 len)
 
 bool rtc_func_set(void *priv, u8 *data, u16 len)
 {
+    printf("[rcsp set]%s",__func__);
+    put_buf(data,len);
     u8 ret = 0;
     u8 offset = 0;
     RTC_TIME time_info;
@@ -375,7 +382,7 @@ bool rtc_func_set(void *priv, u8 *data, u16 len)
         u8 type = data[offset + 1];
         printf("rtc info:\n");
         put_buf(&data[offset], len_tmp + 1);
-
+        printf("type = %d",type);
         switch (type) {
         case RTC_INFO_ATTR_RTC_TIME:
             printf("RTC_INFO_ATTR_RTC_TIME\n");
@@ -426,6 +433,7 @@ static u8 smart_rtc_alarm_extra_data_get(u8 *p, u8 index, u8 is_conversion)
 
 u32 rtc_func_get(void *priv, u8 *buf, u16 buf_size, u32 mask)
 {
+    printf("[rcsp get]%s",__func__);
     u16 offset = 0;
     if (mask & BIT(RTC_INFO_ATTR_RTC_TIME)) {
         printf("RTC_INFO_ATTR_RTC_TIME\n");

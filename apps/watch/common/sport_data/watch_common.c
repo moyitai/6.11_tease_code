@@ -67,6 +67,8 @@ OS_SEM SPO2_SEM;
 OS_SEM HR_SEM;
 static int data_temp_storage(void);
 extern void mem_stats(void);
+
+//myself defind
 //***************************************************************
 //							api
 //***************************************************************
@@ -919,12 +921,13 @@ static int algo_motion_clr(void)
 }
 static int algo_detection_response(void)
 {
+    printf("%s",__func__);
     if (watch.init_status == 0) {
         return 0;
     }
 
-    /* printf("wrist=%d,wear=%d,sleep=%d,fall=%d,sedentary=%d", watch.flag[0], watch.flag[1], \ */
-    /* watch.flag[2], watch.flag[3], watch.flag[4]); */
+     printf("wrist=%d,wear=%d,sleep=%d,fall=%d,sedentary=%d", watch.flag[0], watch.flag[1], \ 
+     watch.flag[2], watch.flag[3], watch.flag[4]); 
     //记录标志
     //flag[0]中0没有抬腕,1抬腕；
     //flag[1]中0佩戴，1没有佩戴；
@@ -1036,23 +1039,28 @@ static u8 algo_cnt = 0;
 short gsensorbuf[WATCHLEN];
 static void refresh_watch_data(void *param)
 {
-    /* printf("%s %s", __func__, os_current_task());  */
+     printf("%s %s", __func__, os_current_task());  
     if (watch.init_status != 1) {
-        log_e("watch_not_init");
+        printf("watch_not_init");
         return ;
     }
-    int buflen = read_gsensor_nbuf(gsensorbuf, sizeof(short) * WATCHLEN);				//读取传感器函数
+    printf("refresh_watch_data 1111");
+    /*int buflen = read_gsensor_nbuf(gsensorbuf, sizeof(short) * WATCHLEN);				//读取传感器函数
     if (buflen == 0) {
+         printf("refresh_watch_data 2222");
         search_gsensor_cnt++;
         if ((search_gsensor_cnt >= 5) & (!whr.read_status) & (!wspo2.read_status)) {
+             printf("refresh_watch_data 3333");
             gsensor_disable();
             gsensor_enable();
             search_gsensor_cnt = 0;
         }
-        log_e("buflen=0");
+        printf("refresh_watch_data 4444");
+        printf("buflen=0");
         return ;
-    }
+    }*/
     search_gsensor_cnt = 0;
+      printf("refresh_watch_data 5555");
     //算法	如果没有心率传感器，则把whr.HR改成一个定值,0只计步，(60,90)可以做简单的运动判断
     if (whr.work_status == 0) {
         whr.HR = 90; //
@@ -1060,9 +1068,11 @@ static void refresh_watch_data(void *param)
     } else {
         run_watch(watch.workbuf, gsensorbuf, WATCHLEN, watch.flag, WP, 1, whr.HR);
     }
+     printf("refresh_watch_data 66666");
     algo_detection_response();
     algo_cnt++;
     if (algo_cnt >= (int)(WATCHFREQ * WATCHPOINT / WATCHLEN)) {
+         printf("refresh_watch_data 7777777777");
         algo_motion_info_refresh();
         refresh_detection_time();
         /* printf("switch wrist=%d,sleep=%d ,fall=%d,sendentary=%d", WP.wrist_enable, WP.sleep_enable, WP.fall_enable, WP.Sedentary_enable); */
@@ -1082,6 +1092,7 @@ static void refresh_watch_data(void *param)
 
 static int refresh_watch_data_check_cb(int *parm)
 {
+    printf("refresh_watch_data_check_cb");
     int argv[3];
     argv[0] = (int)refresh_watch_data;
     argv[1] = 1;
@@ -1260,17 +1271,43 @@ static u8 step_stop(void)
     return 0;
 }
 
-
+static u8 sc701_height1;
+static u8 sc701_weight1;
+static u8 sc701_age1;
+static u8 sc701_gender1;
+static u8 get_person_swich;
+//static struct info_person sc701;
+u8 get_height1_info_person(void)
+{
+    return sc701_height1;
+}
+u8 get_weight1_info_person(void)
+{
+    return sc701_weight1;
+}
+u8 get_age1_info_person(void)
+{
+    return sc701_age1;
+}
+u8 get_gender1_info_person(void)
+{
+    return sc701_gender1;
+}
+u8 get_person_swich1(void)
+{
+    return get_person_swich;
+}
 static u8 set_watch_sport_initial_value_before(void)   //初始化前的参数、状态的配置
 {
     printf("%s", __func__);
     detection_init();
+
     //个人信息
     extern personal_information info;
     memset(&info, 0, sizeof(personal_information));
     sport_personal_info_get(&info);
     u8 age = watch_time_age(info.birth_y, info.birth_m, info.birth_d);
-    /* printf("%d %d %d %d", info.height, info.weight, info.gender, age); */
+     printf("asdfaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa%d %d %d %d", info.height, info.weight, info.gender, age); 
     if (!info.height) {
         PI.height = HEIGHT;
     } else {
@@ -1286,7 +1323,14 @@ static u8 set_watch_sport_initial_value_before(void)   //初始化前的参数�
     } else {
         PI.age = age;
     }
+    get_person_swich = 1;
     PI.gender = info.gender;
+    sc701_height1 = PI.height;
+    sc701_weight1  = PI.weight;
+    sc701_age1 = PI.age;
+    sc701_gender1 = PI.gender;
+
+
     /* printf("%s %d %d %d %d", __func__, PI.height, PI.weight, PI.gender, PI.age); */
     return 0;
 }
@@ -1467,7 +1511,28 @@ int watch_sensor_close(void)
     /* mem_stats(); */
     return 1;
 }
+static u8 sc701_height;
+static u8 sc701_weight;
+static u8 sc701_age;
+static u8 sc701_gender;
 
+//static struct info_person sc701;
+u8 get_height_info_person(void)
+{
+    return sc701_height;
+}
+u8 get_weight_info_person(void)
+{
+    return sc701_weight;
+}
+u8 get_age_info_person(void)
+{
+    return sc701_age;
+}
+u8 get_gender_info_person(void)
+{
+    return sc701_gender;
+}
 /**************************************************
  			 		设置接口
 ***************************************************/
@@ -1485,12 +1550,17 @@ int personal_information_set(struct personal_info *personal_info)
     }
 #endif
     watch.init_status = 0;
+    get_person_swich = 2;
     data_temp_storage();//保存连续性数据
     PI.height	= personal_info->height;
     PI.weight	= personal_info->weight;
     PI.age		= personal_info->age;
     PI.gender	= personal_info->gender;
     printf("%s %d %d %d %d", __func__, PI.height, PI.weight, PI.age, PI.gender);
+    sc701_height = PI.height;
+    sc701_weight  = PI.weight;
+    sc701_age = PI.age;
+    sc701_gender = PI.gender;
     //重置算法
     watch_api_init();
     return SUCCESS;
@@ -1527,25 +1597,153 @@ int sensor_switch_set(unsigned char type, unsigned char enable)
     }
     return SUCCESS;
 }
+//myself diy
+static u8 wrist_detect_mode_one_500;
+static u8 wrist_detect_mode_two_500;
+static u8 wrist_mode_time[4] = {0};
+void wakeup_screen(void)
+{
+    if(lcd_sleep_status())
+    {
+        if(get_wrist_detect_result())
+        {
+            printf("wrist open screen ist");
+            ui_backlight_open(1);
+        }
+    }else{
+        if(get_wrist_detect_result())
+        {
+            printf("wrist close screen ist");
+           ui_backlight_close();
+        }
+
+    }
+
+}
+static void wrist_rist_detect_1st(void)
+{
+    wakeup_screen();
+}
+
+void use_1st_mode(void)
+{
+    printf("open wrist detete mode 1"); //模式一 全天开启
+if(wrist_detect_mode_two_500)//如果打开模式二定时器 先关闭
+{
+    sys_timer_del(wrist_detect_mode_two_500);
+    wrist_detect_mode_two_500 = 0;
+}
+if(!wrist_detect_mode_one_500){ //如果没有打开模式1 的定时器打开
+
+    wrist_detect_mode_one_500 = sys_timer_add(NULL,wrist_rist_detect_1st, 500);
+}
+}
+static void wrist_raise_detect_sed(void)
+{
+     u8 raise_detect = 0;
+    struct sys_time n_time;
+    watch_file_get_sys_time(&n_time);
+    printf("%s",__func__);
+    //printf("time->hour:time->min %d:%d",n_time.hour,n_time.min);
+    //printf("wrist_mode_time[0]:wrist_mode_time[1] %d:%d",wrist_mode_time[0],wrist_mode_time[1]);
+    //printf("wrist_mode_time[2]:wrist_mode_time[3] %d:%d",wrist_mode_time[2],wrist_mode_time[3]);
+    if ((wrist_mode_time[0] * 60 + wrist_mode_time[1]) < (wrist_mode_time[2] * 60 + wrist_mode_time[3])) { // -0--s-1-e--0-开始时间＜结束时间，按自然时间处理
+        if ((n_time.hour * 60 + n_time.min) >= (wrist_mode_time[2] * 60 + wrist_mode_time[3])) {
+            //printf("close this function 111 ");
+        } else {
+            if ((n_time.hour * 60 + n_time.min) >= (wrist_mode_time[0] * 60 + wrist_mode_time[1])) {
+                wakeup_screen();
+                //printf("open this function 111 ");
+            } else {
+                //printf("close this function 222");
+            }
+        }
+    } else {	// -1--e-0-s--1-结束时间小于开始时间，按+1day处理
+        if ((n_time.hour * 60 + n_time.min) >= (wrist_mode_time[0] * 60 + wrist_mode_time[1])) {
+            wakeup_screen();
+            //printf("open this function 222 ");
+        } else {
+            if ((n_time.hour * 60 + n_time.min) >= (wrist_mode_time[2] * 60 + wrist_mode_time[3])) {
+                   // printf("close this function 333 ");
+            } else {
+                   // printf("open this function 333 ");
+                    wakeup_screen();
+            }
+        }
+    }
+
+}
+void use_2nd_mode(void)
+{
+    if(wrist_detect_mode_one_500)//如果打开模式一定时器 先关闭模式一定时器
+    {
+        sys_timer_del(wrist_detect_mode_one_500);
+        wrist_detect_mode_one_500 = 0;
+    }
+    if(!wrist_detect_mode_two_500){
+        printf("tran time to the timer");
+        wrist_detect_mode_two_500 = sys_timer_add(NULL,wrist_raise_detect_sed, 500);
+        printf("tran time to the timer11111");
+    }
+}
+void use_3rd_mode(void)
+{
+    if(wrist_detect_mode_one_500){
+        sys_timer_del(wrist_detect_mode_one_500);
+        wrist_detect_mode_one_500 = 0;
+    }
+    if(wrist_detect_mode_two_500)
+    {
+        sys_timer_del(wrist_detect_mode_two_500);
+        wrist_detect_mode_two_500 = 0;
+    }
+    printf("close wrist detete");
+}
+
+
 int detection_init(void)
 {
+    printf("%s1111",__func__);
     u8 *mode_data = NULL;
     u16 mode_len = 0;
     u8 enable;
     u8 buf[20];
+    sport_raise_wrist_get((raise_wrist_t *)buf);
+    printf("%d %d %d %d",buf[0],buf[1],buf[2],buf[3]);
 //WRIST
     if (sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_RAISE_WRIST)) {
-        enable = SWITCH_ON;
+        printf("%s2222",__func__);
+        if(enable == SWITCH_ON ){
+        printf("in 1st");
+        use_1st_mode();
+        }
+        
     } else if (sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_RAISE_WRIST_CUSTOMIZE)) {
-        enable = SWITCH_TIMING;
+        swich_init_set = 1;
+        printf("%s333",__func__);
+        if(enable = SWITCH_TIMING)
+        {
+            printf("in 2nd");
+            wrist_mode_time[0] = buf[0];
+            wrist_mode_time[1] = buf[1];
+            wrist_mode_time[2] = buf[2];
+            wrist_mode_time[3] = buf[3];
+            use_2nd_mode();
+        }
     } else {
-        enable = SWITCH_OFF;
+        printf("%s4444",__func__);
+        if(enable == SWITCH_OFF)
+        {
+             printf("in 3rd");
+             use_3rd_mode();
+        }
     }
-    sport_raise_wrist_get((raise_wrist_t *)buf);
     mode_len = sport_info_record_get(SPORT_INFO_MODE_TYPE_RAISE_WRIST, &mode_data);
     if (mode_data && mode_len) {
+         printf("%s55555",__func__);
         save_detection_set(WRIST, enable, mode_data[0], buf);
     }
+
 //SLEEP
     if (sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_SLEEP_DETECTION)) {
         enable = SWITCH_ON;
@@ -1626,88 +1824,7 @@ int detection_init(void)
     printf("sendentary=%d,fall=%d,wrist=%d,sleep=%d", WP.Sedentary_enable, WP.fall_enable, WP.wrist_enable, WP.sleep_enable);
     return 0;
 }
-static u8 wrist_detect_mode_one_500;
-static u8 wrist_detect_mode_two_500;
-static void wrist_rist_detect_1st(void)
-{
 
-    if(lcd_sleep_status())
-    {
-        if(get_wrist_detect_result())
-        {
-            printf("wrist open screen ist");
-            ui_backlight_open(1);
-        }
-    }else{
-        if(get_wrist_detect_result())
-        {
-             printf("wrist close screen ist");
-           ui_backlight_close();
-        }
-
-    }
-}
-
-static void get_sys_time(struct sys_time *time)
-{
-    void *fd = dev_open("rtc", NULL);
-    if (!fd) {
-        get_elapse_time(time);
-        return;
-    }
-    dev_ioctl(fd, IOCTL_GET_SYS_TIME, (u32)time);
-    /* log_info("get_sys_time : %d-%d-%d,%d:%d:%d\n", time->year, time->month, time->day, time->hour, time->min, time->sec); */
-    dev_close(fd);
-}
-
-static u8 wrist_mode_time[4] = {0};
-static void wrist_raise_detect_sed(void)
-{
-    u8 raise_detect = 0;
-    struct sys_time *time;
-    printf("%s",__func__);
-    get_sys_time(time);
-    if(time->hour == wrist_mode_time[0] && time->min == wrist_mode_time[1])
-    {
-        raise_detect = 1;
-        printf("wrist  raise_detect = 1;");
-    }
-    if(time->hour == wrist_mode_time[2] && time->min == wrist_mode_time[3])
-    {
-        raise_detect = 2;
-         printf("wrist  raise_detect = 2;");
-    }
-    if( 1 == raise_detect)
-    {
-
-        if(lcd_sleep_status())
-        {
-            if(get_wrist_detect_result())
-            {
-                 printf("wrist open screen scd raise_detect = 1;");
-                ui_backlight_open(1);
-            }
-        }
-        else{
-            if(get_wrist_detect_result())
-            {
-                 printf("wrist close screen scd raise_detect = 1;");
-            ui_backlight_close();
-            }
-
-        }
-    }
-    if( 2 == raise_detect)
-    {
-       /* if(get_wrist_detect_result())
-        {
-             ui_screen_recover(1);
-        }*/
-        printf("not excuct this");
-
-    }
-
-}
 int detection_ioctrl(int arg_num, int *arg) //打开检测功能，注册回调函数
 {
     int type = -1;
@@ -1737,55 +1854,35 @@ int detection_ioctrl(int arg_num, int *arg) //打开检测功能，注册回调�
            __func__, arg_num,		type,	enable,	response_mode,	time[0], time[1], time[2], time[3]);
     switch (type) {
     case WRIST:
+     //save_detection_set(type, enable, response_mode, time);
      {
+
         wrist_mode_time[0] = (arg[3] >> 24) & 0xff;
         wrist_mode_time[1] = (arg[3] >> 16) & 0xff;
         wrist_mode_time[2] = (arg[3] >> 8) & 0xff;
         wrist_mode_time[3] = (arg[3]) & 0xff;
         if(enable)
         {
-            if(enable == 1 ){
-            printf("open wrist detete mode 1"); //模式一 全天开启
-            if(wrist_detect_mode_two_500)//如果打开模式二定时器 先关闭
+            if(enable == 1 )
             {
-                sys_timer_del(wrist_detect_mode_two_500);
-                wrist_detect_mode_two_500 = 0;
-            }
-            if(!wrist_detect_mode_one_500){ //如果没有打开模式1 的定时器打开
-
-                wrist_detect_mode_one_500 = sys_timer_add(NULL,wrist_rist_detect_1st, 500);
-             }
+                printf("open wrist detete mode 1"); //模式一 全天开启
+                use_1st_mode();
+                break;
+                }
+            else if(enable == 2)//模式二
+            {
+                printf("open wrist detete mode 2");
+                use_2nd_mode();
                 break;
             }
-        //     else if(enable == 2)//模式二
-        //     {
-        //     if(wrist_detect_mode_one_500)//如果打开模式一定时器 先关闭模式一定时器
-        //     {
-        //         sys_timer_del(wrist_detect_mode_one_500);
-        //         wrist_detect_mode_one_500 = 0;
-        //     }
-        //     if(!wrist_detect_mode_two_500){
-        //         printf("tran time to the timer");
-        //     wrist_detect_mode_two_500 = sys_timer_add(NULL,wrist_raise_detect_sed, 500);
-        //     printf("tran time to the timer11111");
-        //     }
-        //     break;
-        // }
         }
         else{
-            if(wrist_detect_mode_one_500){
-                sys_timer_del(wrist_detect_mode_one_500);
-                wrist_detect_mode_one_500 = 0;
-            }
-            // if(wrist_detect_mode_two_500)
-            // {
-            //     sys_timer_del(wrist_detect_mode_two_500);
-            //     wrist_detect_mode_two_500 = 0;
-            // }
-            printf("close wrist detete");
+            printf("open wrist detete mode 3");
+            use_3rd_mode();
             break;
         }
-        }
+    }
+    save_detection_set(type, enable, response_mode, time);
         break;
     case FALL:
         if(enable)
@@ -1804,9 +1901,17 @@ int detection_ioctrl(int arg_num, int *arg) //打开检测功能，注册回调�
         }
         break;
     case SLEEP:
-        save_detection_set(type, enable, response_mode, time);
+        //save_detection_set(type, enable, response_mode, time);
+        printf("into sleep detect mode ");
+        if(enable)
+        {
+            printf("open SLEEP detete");
+        }else{
+            printf("close SLEEP detete");
+        }
         break;
     case EXERCISE_HEART_RATE://仅运动时有效
+        printf("into EXERCISE_HEART_RATE detect mode ");
         printf("%s,%d", __func__, hr_threshold);
         save_exercise_heart_rate(enable, hr_threshold);
         save_exercise_heart_rate_mode(enable, arg[3]);

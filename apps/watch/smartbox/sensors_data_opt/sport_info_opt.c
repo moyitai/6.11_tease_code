@@ -100,12 +100,18 @@ __get_sport_info_end:
 
 static void set_sport_info(void *priv, u8 OpCode, u8 OpCode_SN, u8 *data, u16 len)
 {
-    printf("set_sport_info\n");
     struct smartbox *smart = (struct smartbox *)priv;
     if (smart == NULL) {
         return;
     }
+    printf("%s",__func__);
     put_buf(data, len);
+    if((data[0] == 07) && (data[1] == 03))
+    {
+        data[1] = 8;
+        printf("===------%s",__func__);
+        put_buf(data, len);
+    }
     attr_set(priv, data, len, target_common_sport_info_set_tab, SPORTS_INFO_OPT_FUNC_ATTR_TYPE_MAX);
     if (smart->err_code) {
         smart->err_code = 0;
