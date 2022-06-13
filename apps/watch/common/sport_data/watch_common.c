@@ -1260,17 +1260,43 @@ static u8 step_stop(void)
     return 0;
 }
 
-
+static u8 sc701_height1;
+static u8 sc701_weight1;
+static u8 sc701_age1;
+static u8 sc701_gender1;
+static u8 get_person_swich;
+//static struct info_person sc701;
+u8 get_height1_info_person(void)
+{
+    return sc701_height1;
+}
+u8 get_weight1_info_person(void)
+{
+    return sc701_weight1;
+}
+u8 get_age1_info_person(void)
+{
+    return sc701_age1;
+}
+u8 get_gender1_info_person(void)
+{
+    return sc701_gender1;
+}
+u8 get_person_swich1(void)
+{
+    return get_person_swich;
+}
 static u8 set_watch_sport_initial_value_before(void)   //初始化前的参数、状态的配置
 {
     printf("%s", __func__);
     detection_init();
+
     //个人信息
     extern personal_information info;
     memset(&info, 0, sizeof(personal_information));
     sport_personal_info_get(&info);
     u8 age = watch_time_age(info.birth_y, info.birth_m, info.birth_d);
-    /* printf("%d %d %d %d", info.height, info.weight, info.gender, age); */
+     printf("asdfaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa%d %d %d %d", info.height, info.weight, info.gender, age); 
     if (!info.height) {
         PI.height = HEIGHT;
     } else {
@@ -1286,7 +1312,14 @@ static u8 set_watch_sport_initial_value_before(void)   //初始化前的参数�
     } else {
         PI.age = age;
     }
+    get_person_swich = 1;
     PI.gender = info.gender;
+    sc701_height1 = PI.height;
+    sc701_weight1  = PI.weight;
+    sc701_age1 = PI.age;
+    sc701_gender1 = PI.gender;
+
+
     /* printf("%s %d %d %d %d", __func__, PI.height, PI.weight, PI.gender, PI.age); */
     return 0;
 }
@@ -1467,7 +1500,28 @@ int watch_sensor_close(void)
     /* mem_stats(); */
     return 1;
 }
+static u8 sc701_height;
+static u8 sc701_weight;
+static u8 sc701_age;
+static u8 sc701_gender;
 
+//static struct info_person sc701;
+u8 get_height_info_person(void)
+{
+    return sc701_height;
+}
+u8 get_weight_info_person(void)
+{
+    return sc701_weight;
+}
+u8 get_age_info_person(void)
+{
+    return sc701_age;
+}
+u8 get_gender_info_person(void)
+{
+    return sc701_gender;
+}
 /**************************************************
  			 		设置接口
 ***************************************************/
@@ -1485,12 +1539,17 @@ int personal_information_set(struct personal_info *personal_info)
     }
 #endif
     watch.init_status = 0;
+    get_person_swich = 2;
     data_temp_storage();//保存连续性数据
     PI.height	= personal_info->height;
     PI.weight	= personal_info->weight;
     PI.age		= personal_info->age;
     PI.gender	= personal_info->gender;
     printf("%s %d %d %d %d", __func__, PI.height, PI.weight, PI.age, PI.gender);
+    sc701_height = PI.height;
+    sc701_weight  = PI.weight;
+    sc701_age = PI.age;
+    sc701_gender = PI.gender;
     //重置算法
     watch_api_init();
     return SUCCESS;

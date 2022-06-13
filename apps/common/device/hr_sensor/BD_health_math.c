@@ -145,7 +145,7 @@ void BD_16XX_dataread(void) //定时器50ms
 
     uint8_t temp; //---客户其他函数
     temp=BD_Sensor_Data_Read(bd_hrs_data);//--0---数据未满一帧,1--满一帧,2--通讯 异常
-     /*printf("[hrs1662]%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",bd_data_result[0],bd_data_result[1],\
+    /* printf("[hrs1662]%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",bd_data_result[0],bd_data_result[1],\
             bd_data_result[2], bd_data_result[3], bd_data_result[4], bd_data_result[5],\
             bd_data_result[6],bd_data_result[7],bd_data_result[8],bd_data_result[9],\
             bd_data_result[10],bd_data_result[11],bd_data_result[12],bd_data_result[13],\
@@ -199,7 +199,7 @@ return spo_enable_swich;
 
 int BD_16XX_io_ctl(u8 cmd, void *arg)
 {
-	//printf("[hrs1662]%s cmd = %d",__func__,cmd);
+	printf("[hrs1662]%s cmd = %d",__func__,cmd);
     switch (cmd) {
     case HR_SENSOR_ENABLE:
       printf("HR_SENSOR_ENABLE333");
