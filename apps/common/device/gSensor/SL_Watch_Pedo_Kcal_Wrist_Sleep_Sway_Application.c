@@ -419,7 +419,7 @@ char sc7A20_driver_init(void)
 	if(ret==38){
 		sc7a20_500ms_timer_cfg(true);
 		printf("timer==is===start");
-		return 0;
+		return 1;
 	}else printf("sc7A20_driver_init fail??? ");
 
 }
@@ -434,6 +434,7 @@ void gsensor_sc7a20_ctl(u8 cmd, void *arg)
         break;
     case GSENSOR_RESET_INT:
         res = sc7A20_driver_init();
+		printf("GSENSOR_RESET_INT ooo");
         memcpy(arg, &res, 1);
         break;
     case GSENSOR_RESUME_INT:
@@ -447,6 +448,7 @@ void gsensor_sc7a20_ctl(u8 cmd, void *arg)
         break;
     case SEARCH_SENSOR:
         res = sc7A20_driver_init();
+		printf("SEARCH_SENSORppp");
         memcpy(arg, &res, 1);
         break;
     default:

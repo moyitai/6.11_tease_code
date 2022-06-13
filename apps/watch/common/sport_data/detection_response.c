@@ -167,6 +167,7 @@ int call_emergency_contact_number(void)
 //时段使能刷新
 int refresh_detection_time(void)
 {
+    printf("%szzzzzzzzzzzzzzzzz",__func__);
     struct sys_time n_time;
     watch_file_get_sys_time(&n_time);
     u8 save_time[4];
