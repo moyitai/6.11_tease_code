@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<FileVersion major="1" minor="0" />
+	<ActiveTarget name="Release" />
+	<File name="apps\watch\ui\lcd\STYLE_WATCH_NEW\ui_action_set.c" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="130982" topLine="4586" />
+		</Cursor>
+	</File>
+	<File name="apps\watch\task_manager\app_common.c" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="7760" topLine="231" />
+		</Cursor>
+	</File>
+	<File name="apps\watch\ui\lcd\STYLE_WATCH_NEW\ui_action_dial.c" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="47345" topLine="1564" />
+		</Cursor>
+	</File>
+	<File name="apps\watch\common\sport_data\watch_common.c" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="25804" topLine="644" />
+		</Cursor>
+	</File>
+	<File name="apps\watch\include\sport_data\watch_api.h" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2393" topLine="12" />
+		</Cursor>
+	</File>
+	<File name="apps\common\device\gSensor\SL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Algorithm.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="apps\watch\include\sport_data\watch_common.h" open="1" top="1" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8823" topLine="298" />
+		</Cursor>
+	</File>
+	<File name="apps\common\device\gSensor\SL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Application.c" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="175" topLine="0" />
+		</Cursor>
+	</File>
+</CodeBlocks_layout_file>
