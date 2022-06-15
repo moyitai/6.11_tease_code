@@ -442,9 +442,9 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_LCD_SPI_ST7789V_ENABLE         DISABLE_THIS_MOUDLE
 #define TCFG_LCD_SPI_ST7789_BOE1_54_ENABLE  DISABLE_THIS_MOUDLE
 #define TCFG_LCD_SPI_RM69330_ENABLE         DISABLE_THIS_MOUDLE
-#define TCFG_LCD_SPI_SH8601A_ENABLE         ENABLE_THIS_MOUDLE
+#define TCFG_LCD_SPI_SH8601A_ENABLE         0//ENABLE_THIS_MOUDLE
 #define TCFG_LCD_MCU_JD5858_ENABLE          DISABLE_THIS_MOUDLE
-#define TCFG_LCD_MCU_JD5858_ZHAOYU_ENABLE   DISABLE_THIS_MOUDLE
+#define TCFG_LCD_MCU_JD5858_ZHAOYU_ENABLE   1//DISABLE_THIS_MOUDLE
 #define TCFG_LCD_RGB_ST7789V_ENABLE         DISABLE_THIS_MOUDLE
 #define TCFG_LCD_ST7789VW_ENABLE	        DISABLE_THIS_MOUDLE
 #define TCFG_LCD_OLED_ENABLE	            DISABLE_THIS_MOUDLE
@@ -513,7 +513,7 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_RVDD2PVDD_DCDC					0	// 低功耗外接dcdc
 #define TCFG_RVDD2PVDD_DCDC_EN_IO			IO_PORTC_06
 
-#define TCFG_LOWPOWER_RAM_SIZE				3	// 低功耗掉电ram大小，单位：128K
+#define TCFG_LOWPOWER_RAM_SIZE				0	// 低功耗掉电ram大小，单位：128K
 
 //*********************************************************************************//
 //                                  EQ配置                                         //
