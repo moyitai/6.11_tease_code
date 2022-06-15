@@ -442,9 +442,9 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_LCD_SPI_ST7789V_ENABLE         DISABLE_THIS_MOUDLE
 #define TCFG_LCD_SPI_ST7789_BOE1_54_ENABLE  DISABLE_THIS_MOUDLE
 #define TCFG_LCD_SPI_RM69330_ENABLE         DISABLE_THIS_MOUDLE
-#define TCFG_LCD_SPI_SH8601A_ENABLE         ENABLE_THIS_MOUDLE
+#define TCFG_LCD_SPI_SH8601A_ENABLE         0//ENABLE_THIS_MOUDLE
 #define TCFG_LCD_MCU_JD5858_ENABLE          DISABLE_THIS_MOUDLE
-#define TCFG_LCD_MCU_JD5858_ZHAOYU_ENABLE   DISABLE_THIS_MOUDLE
+#define TCFG_LCD_MCU_JD5858_ZHAOYU_ENABLE   1//DISABLE_THIS_MOUDLE
 #define TCFG_LCD_RGB_ST7789V_ENABLE         DISABLE_THIS_MOUDLE
 #define TCFG_LCD_ST7789VW_ENABLE	        DISABLE_THIS_MOUDLE
 #define TCFG_LCD_OLED_ENABLE	            DISABLE_THIS_MOUDLE
@@ -454,10 +454,10 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_TFT_LCD_DEV_SPI_HW_NUM			1// 0: SPI0    1: SPI1    2: SPI2 配置lcd选择的spi口
 #define TCFG_TOUCH_PANEL_ENABLE             ENABLE//DISABLE
 #define TCFG_TOUCH_USER_IIC_TYPE            0  //0:软件IIC  1:硬件IIC
-#define TCFG_TP_BL6133_ENABLE               ENABLE_THIS_MOUDLE//注意: iic 时钟需小于200k。软件IIC，系统192Mhz，TCFG_SW_I2C0_DELAY_CNT需要大于70
+#define TCFG_TP_BL6133_ENABLE               0//ENABLE_THIS_MOUDLE//注意: iic 时钟需小于200k。软件IIC，系统192Mhz，TCFG_SW_I2C0_DELAY_CNT需要大于70
 #define TCFG_TP_IT7259E_ENABLE              DISABLE_THIS_MOUDLE
 #define TCFG_TP_FT6336G_ENABLE				DISABLE_THIS_MOUDLE
-#define TCFG_TP_CST816S_ENABLE              DISABLE_THIS_MOUDLE
+#define TCFG_TP_CST816S_ENABLE              1//DISABLE_THIS_MOUDLE
 #define TCFG_TP_INT_IO                      IO_PORTG_05
 #define TCFG_TP_RESET_IO                    IO_PORTG_06
 
@@ -513,7 +513,7 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_RVDD2PVDD_DCDC					0	// 低功耗外接dcdc
 #define TCFG_RVDD2PVDD_DCDC_EN_IO			IO_PORTC_06
 
-#define TCFG_LOWPOWER_RAM_SIZE				3	// 低功耗掉电ram大小，单位：128K
+#define TCFG_LOWPOWER_RAM_SIZE				0	// 低功耗掉电ram大小，单位：128K
 
 //*********************************************************************************//
 //                                  EQ配置                                         //
