@@ -35,7 +35,7 @@
 //*********************************************************************************//
 #define TCFG_UART0_ENABLE					ENABLE_THIS_MOUDLE                     //串口打印模块使能
 #define TCFG_UART0_RX_PORT					NO_CONFIG_PORT                         //串口接收脚配置（用于打印可以选择NO_CONFIG_PORT）
-#define TCFG_UART0_TX_PORT  				IO_PORTA_04                            //串口发送脚配置
+#define TCFG_UART0_TX_PORT  				IO_PORT_DP                            //串口发送脚配置
 #define TCFG_UART0_BAUDRATE  				1000000                                //串口波特率配置
 
 //*********************************************************************************//
@@ -409,9 +409,9 @@ DAC硬件上的连接方式,可选的配置：
 //                                  充电参数配置                                   //
 //*********************************************************************************//
 //是否支持芯片内置充电
-#define TCFG_CHARGE_ENABLE					DISABLE_THIS_MOUDLE
+#define TCFG_CHARGE_ENABLE					1//DISABLE_THIS_MOUDLE
 //是否支持开机充电
-#define TCFG_CHARGE_POWERON_ENABLE			DISABLE
+#define TCFG_CHARGE_POWERON_ENABLE			1//DISABLE
 //是否支持拔出充电自动开机功能
 #define TCFG_CHARGE_OFF_POWERON_NE			DISABLE
 /*充电截止电压可选配置*/
@@ -419,7 +419,7 @@ DAC硬件上的连接方式,可选的配置：
 /*充电截止电流可选配置*/
 #define TCFG_CHARGE_FULL_MA					CHARGE_FULL_mA_10
 /*恒流充电电流可选配置*/
-#define TCFG_CHARGE_MA						CHARGE_mA_200
+#define TCFG_CHARGE_MA						CHARGE_mA_140
 /*涓流充电电流配置*/
 #define TCFG_CHARGE_TRICKLE_MA              CHARGE_mA_20
 
