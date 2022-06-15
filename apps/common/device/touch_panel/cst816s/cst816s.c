@@ -36,11 +36,14 @@
 #define iic_suspend(iic)                    soft_iic_suspend(iic)
 #define iic_resume(iic)                     soft_iic_resume(iic)
 #endif
-
 typedef struct {
+    u8 iic_hdl;
+    u8 iic_delay;    //这个延时并非影响iic的时钟频率，而是2Byte数据之间的延时
+} ft_param;
+/*typedef struct {
     u8 init;
     hw_iic_dev iic_hdl;
-} ft_param;
+} ft_param;*/
 
 static ft_param module_param = {0};
 #define __this   (&module_param)
@@ -52,10 +55,10 @@ static ft_param module_param = {0};
 #define CST816S_RESET_H() gpio_direction_output(IO_PORTA_01,1)
 #define CST816S_RESET_L() gpio_direction_output(IO_PORTA_01,0)
 #else
-#define CST816S_RESET_H() gpio_direction_output(IO_PORTA_02,1)
-#define CST816S_RESET_L() gpio_direction_output(IO_PORTA_02,0)
+#define CST816S_RESET_H() gpio_direction_output(IO_PORTG_06,1)
+#define CST816S_RESET_L() gpio_direction_output(IO_PORTG_06,0)
 #endif
-#define CST816S_INT_IO    (IO_PORTC_01)
+#define CST816S_INT_IO    (IO_PORTG_05)
 #define CST816S_INT_IN()  gpio_direction_input(CST816S_INT_IO);gpio_set_pull_down(CST816S_INT_IO,0);gpio_set_pull_up(CST816S_INT_IO,1);
 #define CST816S_INT_R()   gpio_read(CST816S_INT_IO)
 
@@ -140,6 +143,7 @@ int i2c_read_regs_ex(i2c_t dev, uint16_t address, void *reg,
     iic_start(__this->iic_hdl);
     if (0 == iic_tx_byte(__this->iic_hdl, address << 1)) {
         iic_stop(__this->iic_hdl);
+        printf("%s,%d iic error", __func__, __LINE__);
         return -1;
     }
     delay(CST816S_IIC_DELAY);
@@ -149,6 +153,7 @@ int i2c_read_regs_ex(i2c_t dev, uint16_t address, void *reg,
     iic_start(__this->iic_hdl);
     if (0 == iic_tx_byte(__this->iic_hdl, (address << 1) | 0x01)) {
         iic_stop(__this->iic_hdl);
+        printf("%s,%d iic error", __func__, __LINE__);
         return -1;
     }
 
@@ -237,6 +242,77 @@ static uint8_t CST816S_I2C_Read_32(uint32_t reg, uint8_t *buf, uint8_t len)
     return 0;
 }*/
 
+
+
+#define ENERGY_XDISTANCE	15
+#define ENERGY_YDISTANCE	15
+#define ENERGY_TIME			20 //ms
+struct touch_kinetic_energy {
+    int t1;
+    int x1;
+    int y1;
+
+    int t2;
+    int x2;
+    int y2;
+};
+static struct touch_kinetic_energy tke = {0};
+static void tke_start(int x, int y)
+{
+    memcpy(&tke.t2, &tke.t1, sizeof(tke) / 2);
+
+    if ((tke.x1 == x) && (tke.y1 == y)) {
+        tke.t1 = tke.t1;
+    } else {
+        tke.t1 = jiffies_msec();
+    }
+    tke.x1 = x;
+    tke.y1 = y;
+    /* printf("tke start %d, %d, %d\n", tke.t1, tke.x1, tke.y1); */
+}
+
+static void tke_stop(int x, int y)
+{
+    struct touch_event t;
+    u8 xdir, ydir;
+
+    if (tke.t1 == 0) {
+        return;
+    }
+    tke.t1 = tke.t1 - tke.t2;
+    tke.x1 = tke.x1 - tke.x2;
+    tke.y1 = tke.y1 - tke.y2;
+
+    /* printf("tke end %d, %d, %d\n", tke.t1, tke.x1, tke.y1); */
+
+    if ((tke.t1 < ENERGY_TIME) &&
+        ((abs(tke.x1) > ENERGY_XDISTANCE) || abs(tke.y1) > ENERGY_YDISTANCE)) {
+
+        if (abs(tke.x1) <= ENERGY_XDISTANCE) {
+            tke.x1 = 0;
+        }
+        if (abs(tke.y1) <= ENERGY_YDISTANCE) {
+            tke.y1 = 0;
+        }
+        xdir = (tke.x1 < 0) ? 1 : 2;
+        ydir = (tke.y1 < 0) ? 1 : 2;
+        /* printf("xdir %d, ydir %d\n", xdir, ydir); */
+
+        t.event = ELM_EVENT_TOUCH_ENERGY;
+        t.x = (tke.x1 << 16) | (tke.t1 & 0xffff);
+        t.y = (tke.y1 << 16) | (ydir << 8) | (xdir & 0xff);
+        ui_touch_msg_post(&t);
+
+        /* printf("tke out %d, %d, %d, %d, %d\n", (t.x & 0xffff), (t.x >> 16), (t.y >> 16), (t.y & 0xff), (t.y >> 8) & 0xff); */
+
+    }
+
+    memset(&tke, 0, sizeof(tke));
+
+}
+
+
+
 void cst816s_reset();
 static int cst816s_enter_bootmode(void)
 {
@@ -255,26 +331,26 @@ static int cst816s_enter_bootmode(void)
 
     while (retryCnt--) {
         uint8_t cmd[3];
-        cmd[0] = 0xAB;
+        cmd[0] = 0xAB;  //校验
 
         char reg[2] = {0xA0, 0x01};
-        if (-1 == i2c_write_regs_ex(I2C_MASTER_CI2C0, CST816S_UPGRADE_ADD, &reg, cmd, 1, 0)) { // enter program mode
+        if (-1 == i2c_write_regs_ex(I2C_MASTER_CI2C0, CST816S_UPGRADE_ADD, &reg, cmd, 1, 0) && 0) { // enter program mode
             mdelay(2); // 4ms
             continue;
         }
 
         char reg1[2] = {0xA0, 0x03};
-        if (-1 == i2c_read_regs_ex(I2C_MASTER_CI2C0, CST816S_UPGRADE_ADD, &reg1, cmd, 1, 0)) { // read flag
+        if (-1 == i2c_read_regs_ex(I2C_MASTER_CI2C0, CST816S_UPGRADE_ADD, &reg1, cmd, 1, 0) && 0) { // read flag
             mdelay(2); // 4ms
             continue;
         } else {
             printf("cmd[0] = 0x%02x\n", cmd[0]);
-            if (cmd[0] != 0x55) {
+            if (cmd[0] != 0xc1 && cmd[0] != 0x55) {//susu
                 msleep(2); // 4ms
                 continue;
             } else {
                 /* printf("%s %d \r\n", __FUNCTION__, __LINE__); */
-                printf("cst816s_enter_bootmode succ!\n");
+                g_printf(">>>>>>>>>cst816s_enter_bootmode succ!\n");
                 return 0;
             }
         }
@@ -289,12 +365,13 @@ static int cst816s_update(uint16_t startAddr, uint16_t len, uint8_t *src)
     uint8_t cmd[10];
 
     if (cst816s_enter_bootmode() == -1) {
-        //printf("%s %d \r\n", __FUNCTION__, __LINE__);
+        printf("%s %d \r\n", __FUNCTION__, __LINE__);
         return -1;
     }
     sum_len = 0;
     do {
         if (sum_len >= len) {
+            g_printf("cst816s_update ok...........");
             return -1;
         }
 
@@ -311,13 +388,13 @@ static int cst816s_update(uint16_t startAddr, uint16_t len, uint8_t *src)
         char reg2[2] = {0xA0, 0x04};
         i2c_write_regs_ex(I2C_MASTER_CI2C0, CST816S_UPGRADE_ADD, &reg2, cmd, 1, 0);
         msleep(100);
-        //printf("%s %d \r\n", __FUNCTION__, __LINE__);
+        printf("%s %d \r\n", __FUNCTION__, __LINE__);
         uint8_t retrycnt = 50;
         while (retrycnt--) {
             cmd[0] = 0;
             char reg_read[2] = {0xA0, 0x05};
             i2c_read_regs_ex(I2C_MASTER_CI2C0, CST816S_UPGRADE_ADD, &reg_read, cmd, 1, 0);
-            //printf("%s %d \r\n", __FUNCTION__, __LINE__);
+            printf("%s %d \r\n", __FUNCTION__, __LINE__);
             if (cmd[0] == 0x55) {
                 // success
                 break;
@@ -328,7 +405,7 @@ static int cst816s_update(uint16_t startAddr, uint16_t len, uint8_t *src)
         startAddr += PER_LEN;
         src += PER_LEN;
         sum_len += PER_LEN;
-        //printf("%s %d \r\n", __FUNCTION__, __LINE__);
+        printf("%s %d \r\n", __FUNCTION__, __LINE__);
     } while (len);
 
     // exit program mode
@@ -338,7 +415,78 @@ static int cst816s_update(uint16_t startAddr, uint16_t len, uint8_t *src)
 
     return 0;
 }
+#define  hctp_delayms   msleep
 
+static int __cst816s_update(unsigned short startAddr,unsigned short len, const unsigned char *src)
+{
+	unsigned short sum_len;
+	unsigned char  cmd[10];
+
+	if (cst816s_enter_bootmode() == -1)
+	{
+		return -1;
+	}
+	sum_len = 0;
+
+	do{
+		if (sum_len >= len)
+		{
+            g_printf("OK...........");
+			break;
+		}
+
+		// send address
+		cmd[0] = startAddr&0xFF;
+		cmd[1] = startAddr>>8;
+		// hctp_write_bytes(0xA014,cmd,2,2);
+        char reg0[2] = {0xA0, 0x14};
+        i2c_write_regs_ex(I2C_MASTER_CI2C0, CST816S_UPGRADE_ADD, &reg0, cmd, 2, 0);
+		{
+			unsigned short offset = 0;
+			for (;offset<512;offset+=64)
+			{
+				// hctp_write_bytes(0xA018+offset,src+offset,64,2);
+                char reg1[2] = {0xA0, 0x18};
+                i2c_write_regs_ex(I2C_MASTER_CI2C0, CST816S_UPGRADE_ADD, reg1, src+offset, 64, 0);
+                printf("%s %d \r\n", __FUNCTION__, __LINE__);
+			}
+		}
+		cmd[0] = 0xEE;
+		// hctp_write_bytes(0xA004,cmd,1,2);
+        char reg2[2] = {0xA0, 0x04};
+        i2c_write_regs_ex(I2C_MASTER_CI2C0, CST816S_UPGRADE_ADD, &reg2, cmd, 1, 0);
+		hctp_delayms(30);
+
+		{
+			unsigned char  retrycnt = 50;
+			while(retrycnt--)
+			{
+				cmd[0] = 0;
+				// hctp_read_bytes(0xA005,cmd,1,2);
+                char reg_read[2] = {0xA0, 0x05};
+                i2c_read_regs_ex(I2C_MASTER_CI2C0, CST816S_UPGRADE_ADD, &reg_read, cmd, 1, 0);
+				if (cmd[0] == 0x55)
+				{
+                    g_printf("ID校验成功");
+					// success
+					break;
+				}
+				hctp_delayms(10);
+			}
+		}
+		startAddr += 512;
+		src += 512;
+		sum_len += 512;
+	}while(1);
+
+	// exit program mode
+	cmd[0] = 0x00;
+	// hctp_write_bytes(0xA003,cmd,1,2);
+    char reg3[2] = {0xA0, 0x03};
+    i2c_write_regs_ex(I2C_MASTER_CI2C0, CST816S_UPGRADE_ADD, &reg3, cmd, 1, 0);
+
+	return 0;
+}
 static uint32_t cst816s_read_checksum(uint16_t startAddr, uint16_t len)
 {
     union {
@@ -365,7 +513,7 @@ static uint32_t cst816s_read_checksum(uint16_t startAddr, uint16_t len)
     if (-1 == i2c_read_regs_ex(I2C_MASTER_CI2C0, CST816S_UPGRADE_ADD, &reg_read, checksum.buf, 2, 0)) {
         return -1;
     }
-    printf("%s checksum.sum %d \r\n", __FUNCTION__, checksum.sum);
+    printf("%s CST checksum.sum %x \r\n", __FUNCTION__, checksum.sum);
     return checksum.sum;
 }
 
@@ -387,7 +535,9 @@ bool cst816s_upgrade(void)
             checksum <<= 8;
             checksum |= app_bin[4];
 
-            printf("checksum = 0x%x\n", checksum);
+            // checksum =0;
+
+            printf("APP checksum = 0x%x\n", checksum);
             if (cst816s_read_checksum(startAddr, length) != checksum) {
                 cst816s_update(startAddr, length, app_bin + 6);
                 cst816s_read_checksum(startAddr, length);
@@ -413,20 +563,6 @@ void cst816s_reset()
     delay(11000);//5ms
 }
 
-static bool touch_flag = 0;
-static void touch_event_handler(void *priv);
-
-static int touch_int_handler()
-{
-    touch_flag = 1;
-
-#if defined(CONFIG_CPU_BR28)
-    touch_event_handler(NULL);
-#endif
-
-    return 0;
-}
-
 struct point {
     int x;
     int y;
@@ -436,19 +572,47 @@ typedef struct {
     struct point point;
     int state;
 } lv_indev_data_t;
+bool cst816s_read(lv_indev_data_t *data);
+static bool touch_flag = 0;
+
+static void touch_int_handler(u8 index, u8 gpio)
+{
+
+// strcmp(os_current_task(), "app_core")；
+
+    // g_printf("os_current_task() -----> %s", os_current_task());
+
+    putchar('T');
+    if (gpio != TCFG_TP_INT_IO) {
+        return ;
+    }
+	lv_indev_data_t touch_data;
+    touch_flag = 1;
+
+    cst816s_read(&touch_data);
+
+}
+
+
+
+
 
 #define LV_INDEV_STATE_PR  0
 #define LV_INDEV_STATE_REL 1
-#define VK_X 454
-#define VK_Y 454
+#define VK_X 320
+#define VK_Y 380
 
 static int vk_state = LV_INDEV_STATE_REL;
 
 
-#define Y_MIRROR  1
-#define X_MIRROR  1
+#define Y_MIRROR  0//1
+#define X_MIRROR  0
+#define VK_Y_MOVE   	100//227
+#define VK_X_MOVE      	100//227
+#define VK_X_Y_DIFF    	47
 
 static u8 tp_last_staus = ELM_EVENT_TOUCH_UP;
+static int tp_down_cnt = 0;
 
 #define abs(x)  ((x)>0?(x):-(x) )
 
@@ -459,46 +623,83 @@ static void tpd_down(int raw_x, int raw_y, int x, int y, int p)
     static int first_y = 0;
     static u8 move_flag = 0;
 
+    if (x < 0) {
+        x = 0;
+    }
+    if (x > (VK_X - 1)) {
+        x = VK_X - 1;
+    }
+    if (y < 0) {
+        y = 0;
+    }
+    if (y > (VK_Y - 1)) {
+        y = VK_Y - 1;
+    }
 #if Y_MIRROR
-    y = VK_Y - y;
+    x = VK_X - x - 1;
 #endif
 
 #if X_MIRROR
-    x = VK_X - x;
+    y = VK_Y - y - 1;
 #endif
+
+    if ((tp_last_staus == ELM_EVENT_TOUCH_DOWN) && (x == first_x) && (y == first_y)) {
+        tp_down_cnt++;
+        if (tp_down_cnt < 30) {
+            return;
+        }
+        tp_last_staus = ELM_EVENT_TOUCH_HOLD;
+        tp_down_cnt = 0;
+
+        t.event = tp_last_staus;
+        t.x = x;
+        t.y = y;
+        printf("----tpd_hold----");
+        ui_touch_msg_post(&t);
+        return;
+    }
 
     /* printf("D[%4d %4d %4d]\n", x, y, p); */
     if (tp_last_staus != ELM_EVENT_TOUCH_UP) {
         int x_move = abs(x - first_x);
         int y_move = abs(y - first_y);
 
-        if (!move_flag && (x_move >= 50 || y_move >= 50) && (abs(x_move - y_move) >= 25)) {
+        if (!move_flag && (x_move >= VK_X_MOVE || y_move >= VK_Y_MOVE) && (abs(x_move - y_move) >= VK_X_Y_DIFF)) {
             if (x_move > y_move) {
                 if (x > first_x) {
                     tp_last_staus = ELM_EVENT_TOUCH_R_MOVE;
+                    printf("----tpd_rigth_move----");
                 } else {
                     tp_last_staus = ELM_EVENT_TOUCH_L_MOVE;
+                    printf("----tpd_left_move----");
                 }
 
             } else {
 
                 if (y > first_y) {
                     tp_last_staus = ELM_EVENT_TOUCH_D_MOVE;
+                    printf("----tpd_down_move----");
                 } else {
                     tp_last_staus = ELM_EVENT_TOUCH_U_MOVE;
+                    printf("----tpd_up_move----");
                 }
             }
             move_flag = 1;
         } else {
+            if ((x == first_x) && (y == first_y)) {
+                return;
+            }
             tp_last_staus = ELM_EVENT_TOUCH_MOVE;
-            /* return; */
+            printf("----tpd_move----");
         }
         /* tp_last_staus = ELM_EVENT_TOUCH_HOLD; */
+        tke_start(x, y);
     } else {
         tp_last_staus = ELM_EVENT_TOUCH_DOWN;
         first_x = x;
         first_y = y;
         move_flag = 0;
+        printf("----tpd_down----");
     }
 
     t.event = tp_last_staus;
@@ -510,48 +711,76 @@ static void tpd_down(int raw_x, int raw_y, int x, int y, int p)
 static void tpd_up(int raw_x, int raw_y, int x, int y, int p)
 {
     struct touch_event t;
+
+    if (x < 0) {
+        x = 0;
+    }
+    if (x > (VK_X - 1)) {
+        x = VK_X - 1;
+    }
+    if (y < 0) {
+        y = 0;
+    }
+    if (y > (VK_Y - 1)) {
+        y = VK_Y - 1;
+    }
+
 #if Y_MIRROR
-    x = VK_X - x;
+    x = VK_X - x - 1;
 #endif
 
 #if X_MIRROR
-    y = VK_Y - y;
+    y = VK_Y - y - 1;
 #endif
 
     /* printf("U[%4d %4d %4d]\n", x, y, 0); */
     tp_last_staus = ELM_EVENT_TOUCH_UP;
+    tp_down_cnt = 0;
     t.event = tp_last_staus;
     t.x = x;
     t.y = y;
+    printf("----tpd_up----");
     ui_touch_msg_post(&t);
 
-
+    tke_stop(x, y);
 }
 
 bool cst816s_read(lv_indev_data_t *data)
 {
     unsigned irq_state;
-    unsigned char buf[5];
+    unsigned char buf[7];
     int update = 0;
     static int x_last, y_last;
 
     /* if (update) { */
-    i2c_read_regs(I2C_MASTER_CI2C0, HYN_I2C_ADDR, 0x2, &buf[0], 5, 0);
-    data->point.x = buf[2] | ((buf[1] & 0xF) << 8);
-    data->point.y = buf[4] | ((buf[3] & 0xF) << 8);
+    i2c_read_regs(I2C_MASTER_CI2C0, HYN_I2C_ADDR, 0x00, &buf[0], 7, 0);
+
+	g_printf("%d,%d,%d,%d,%d,%d,%d\r\n", buf[0], buf[1], buf[2], buf[3],
+					buf[4], buf[5], buf[6]);
+
+    data->point.x = buf[4] | ((buf[3] & 0xF) << 8);
+    data->point.y = buf[6] | ((buf[5] & 0xF) << 8);
+
+    r_printf("[ %d,%d ]", data->point.x, data->point.y);
+
+#define LCD_WIDTH   240
+#if 0//TOUCH_X_DIR_REVERSE
+	data->point.x = LCD_WIDTH - data->point.x - 1;
+#endif
+
     x_last = data->point.x;
     y_last = data->point.y;
-    data->state = (buf[0] != 0) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
-    printf("finger:%d, (%d, %d), %s\n", buf[0], data->point.x, data->point.y, (data->state == LV_INDEV_STATE_PR) ? "pressed" : "released");
+    data->state = (buf[2] != 0) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
+    // printf("finger:%d, (%d, %d), %s\n", buf[2], data->point.x, data->point.y, (data->state == LV_INDEV_STATE_PR) ? "pressed" : "released");
     if ((data->point.x == VK_X) && (data->point.y == VK_Y)) {
         vk_state = data->state;
-        printf("vk %s\n", (vk_state == LV_INDEV_STATE_PR) ? "press" : "release");
+        // printf("vk %s\n", (vk_state == LV_INDEV_STATE_PR) ? "press" : "release");
     }
 
-    if (buf[0] != 0) {
-        tpd_down(0, 0, data->point.x, data->point.y, 0);
+    if (buf[2] != 0) {
+        tpd_down(data->point.x, data->point.y, data->point.x, data->point.y, 0);
     } else {
-        tpd_up(0, 0, data->point.x, data->point.y, 0);
+        tpd_up(data->point.x, data->point.y, data->point.x, data->point.y, 0);
     }
 
     /* } else { */
@@ -635,26 +864,60 @@ void cst816s_init()
 
     cst816s_reset();
 
-    if (!cst816s_upgrade()) {
+    /*if (!cst816s_upgrade()) {
         printf("cst816s_upgrade fail!\n");
     }
-    cst816s_reset();
+    cst816s_reset();*/
 
-#ifdef CONFIG_CPU_BR23
-    extern void io_ext_interrupt_init(u8 port, trigger_mode_type trigger_mode, IO_ISR_FUNC cbfun);
-    io_ext_interrupt_init(CST816S_INT_IO, falling_edge_trigger, touch_int_handler);
-
-#if TCFG_UI_ENABLE
-    ui_set_touch_event(touch_event_handler, 2);
-#endif
-
-#elif defined(CONFIG_CPU_BR28)
-    // br28外部中断回调函数，按照现在的外部中断注册方式
-    // io配置在板级，定义在板级头文件，这里只是注册回调函数
     port_edge_wkup_set_callback_by_index(1, touch_int_handler); // 序号需要和板级配置中的wk_param对应上
+    // io_ext_interrupt_init(CST816S_INT_IO, falling_edge_trigger, touch_int_handler);
+#if TCFG_UI_ENABLE
+    ui_set_touch_event(NULL, 0);
 #endif
-
 }
+// __attribute__((weak)) void ctp_enter_sleep(void)
+// {
+// }
+// __attribute__((weak)) void ctp_exit_sleep(void)
+void ctp_enter_sleep(void)   //
+{
+    r_printf("TP进入休眠.......................");
+	unsigned char buf[3];
+
+	// control reset pin
+	// cst816s_reset();
+
+	// hctp_write_bytes(0xE5,buf,1,1);
+    // i2c_read_regs(I2C_MASTER_CI2C0, HYN_I2C_ADDR, 0x00, &buf[0], 7, 0);
+
+    // delay_ms(100);
+    // char reg[2] = {0x00, 0xE5};
+    // buf[0] = 0x03;
+    // i2c_write_regs(I2C_MASTER_CI2C0, HYN_I2C_ADDR, 0xE5, buf, 1, 1);
+
+    // CST816S_RESET_L();
+}
+
+void ctp_exit_sleep(void)
+{
+    r_printf("TP进入工作.......................");
+
+	int ret_val;
+	unsigned char buf[5] = {0};
+
+	// control reset pin
+	cst816s_reset();
+    delay_ms(100);
+
+	//check tp exist
+    char reg[2] = {0x00, 0xA9};
+    i2c_read_regs(I2C_MASTER_CI2C0, HYN_I2C_ADDR, 0xA9, buf, 1, 1);
+	printf("cst816 firmware version: %d\r\n", buf[0]);
+}
+
+
+
+
 
 #endif  //CST816S_COB==1
 

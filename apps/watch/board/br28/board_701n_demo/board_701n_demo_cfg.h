@@ -454,10 +454,10 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_TFT_LCD_DEV_SPI_HW_NUM			1// 0: SPI0    1: SPI1    2: SPI2 配置lcd选择的spi口
 #define TCFG_TOUCH_PANEL_ENABLE             ENABLE//DISABLE
 #define TCFG_TOUCH_USER_IIC_TYPE            0  //0:软件IIC  1:硬件IIC
-#define TCFG_TP_BL6133_ENABLE               ENABLE_THIS_MOUDLE//注意: iic 时钟需小于200k。软件IIC，系统192Mhz，TCFG_SW_I2C0_DELAY_CNT需要大于70
+#define TCFG_TP_BL6133_ENABLE               0//ENABLE_THIS_MOUDLE//注意: iic 时钟需小于200k。软件IIC，系统192Mhz，TCFG_SW_I2C0_DELAY_CNT需要大于70
 #define TCFG_TP_IT7259E_ENABLE              DISABLE_THIS_MOUDLE
 #define TCFG_TP_FT6336G_ENABLE				DISABLE_THIS_MOUDLE
-#define TCFG_TP_CST816S_ENABLE              DISABLE_THIS_MOUDLE
+#define TCFG_TP_CST816S_ENABLE              1//DISABLE_THIS_MOUDLE
 #define TCFG_TP_INT_IO                      IO_PORTG_05
 #define TCFG_TP_RESET_IO                    IO_PORTG_06
 
