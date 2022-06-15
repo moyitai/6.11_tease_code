@@ -1719,7 +1719,6 @@ int detection_init(void)
         }
         
     } else if (sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_RAISE_WRIST_CUSTOMIZE)) {
-        swich_init_set = 1;
         printf("%s333",__func__);
         if(enable = SWITCH_TIMING)
         {
