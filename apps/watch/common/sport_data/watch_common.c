@@ -22,6 +22,7 @@
 #include "clock_cfg.h"
 #include "BD_health_math.h"
 #include "gSensor/SL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Algorithm.h"
+#include "ui/ui_style.h"
 
 #define USED_TIMER         (1)
 #define USED_TASK          (2)
@@ -1699,6 +1700,126 @@ void use_3rd_mode(void)
     }
     printf("close wrist detete");
 }
+//myself diy fall
+static u8 fall_detect_mode_one_500;
+static u8 fall_detect_mode_two_500;
+static u8 fall_detect_mode_three_500;
+static u8 fall_mode_time[4] = {0};
+void fall_wakeup_screen(void)
+{
+    if(lcd_sleep_status())
+    {
+        if(get_fall_detect_result())
+        {
+            printf("fall open screen ist");
+            ui_backlight_open(1);
+        }
+    }else{
+        if(get_fall_detect_result())
+        {
+            printf("fall close screen ist");
+           ui_backlight_close();
+        }
+
+    }
+
+}
+static void fall_rist_detect_1st(void)
+{
+    fall_wakeup_screen();
+}
+
+void fall_use_1st_mode(void)
+{
+    printf("open fall detete mode 1"); //模式一 全天开启
+if(fall_detect_mode_two_500)//如果打开模式二定时器 先关闭
+{
+    sys_timer_del(fall_detect_mode_two_500);
+    fall_detect_mode_two_500 = 0;
+}
+if(fall_detect_mode_three_500)//如果打开模式二定时器 先关闭
+{
+    sys_timer_del(fall_detect_mode_three_500);
+    fall_detect_mode_three_500 = 0;
+}
+if(!fall_detect_mode_one_500){ //如果没有打开模式1 的定时器打开
+
+    fall_detect_mode_one_500 = sys_timer_add(NULL,fall_rist_detect_1st, 500);
+}
+}
+static void fall_raise_detect_sed(void)
+{
+    if(get_fall_detect_result())
+    {
+        printf("fall shake !!!!!!!!!!!!!!!!!!!!!!");
+    }
+}
+void fall_use_2nd_mode(void)
+{
+    if(fall_detect_mode_one_500)//如果打开模式一定时器 先关闭模式一定时器
+    {
+        sys_timer_del(fall_detect_mode_one_500);
+        fall_detect_mode_one_500 = 0;
+    }
+    if(fall_detect_mode_three_500)//如果打开模式一定时器 先关闭模式一定时器
+    {
+        sys_timer_del(fall_detect_mode_three_500);
+        fall_detect_mode_three_500 = 0;
+    }
+    if(!fall_detect_mode_two_500){
+        fall_detect_mode_two_500 = sys_timer_add(NULL,fall_raise_detect_sed, 500);
+    }
+}
+void fall_raise_detect_3rd(void)
+{
+   
+    if(get_fall_detect_result())
+    {
+    printf("fall call mergency !!!!!!!!");
+#if TCFG_UI_ENABLE
+        ui_hide_curr_main();
+        ui_show_main(ID_WINDOW_FALL);
+#endif /* #if TCFG_UI_ENABLE */
+    }
+
+}
+void fall_use_3rd_mode(void)
+{
+
+    if(fall_detect_mode_one_500){
+        sys_timer_del(fall_detect_mode_one_500);
+        fall_detect_mode_one_500 = 0;
+    }
+    if(fall_detect_mode_two_500)
+    {
+        sys_timer_del(fall_detect_mode_two_500);
+        fall_detect_mode_two_500 = 0;
+    }
+    if(!fall_detect_mode_three_500){
+        fall_detect_mode_three_500 = sys_timer_add(NULL,fall_raise_detect_3rd, 500);
+        printf("tran time to the timer333");
+    }
+    printf("close fall detete");
+    printf("call phone !!!!!!!!!!!");
+}
+void fall_use_off_mode(void)
+{
+
+    if(fall_detect_mode_one_500){
+        sys_timer_del(fall_detect_mode_one_500);
+        fall_detect_mode_one_500 = 0;
+    }
+    if(fall_detect_mode_two_500)
+    {
+        sys_timer_del(fall_detect_mode_two_500);
+        fall_detect_mode_two_500 = 0;
+    }
+    if(fall_detect_mode_three_500){
+        sys_timer_del(fall_detect_mode_three_500);
+        fall_detect_mode_three_500 = 0;
+    }
+    printf("close fall detete");
+}
 
 
 int detection_init(void)
@@ -1884,13 +2005,37 @@ int detection_ioctrl(int arg_num, int *arg) //打开检测功能，注册回调�
     save_detection_set(type, enable, response_mode, time);
         break;
     case FALL:
+        {
         if(enable)
         {
-            printf("open FALL detete");
-        }else{
-            printf("close FALL detete");
+                if(response_mode == 0 )
+                {
+                    printf("open fall detete mode 1"); //模式一 全天开启
+                    fall_use_1st_mode();
+                    break;
+                    }
+                else if(response_mode == 1)//模式二
+                {
+                    printf("open fall detete mode 2");
+                    fall_use_2nd_mode();
+                    break;
+                }
+                else //模式二
+                {
+                    printf("open fall detete mode 3");
+                    fall_use_3rd_mode();
+                    break;
+                }
+            }
+            else{
+                printf("open fall detete mode 3");
+                fall_use_off_mode();
+                break;
+            }
         }
+        save_detection_set(type, enable, response_mode, time);
         break;
+
     case SEDENTARY:
         if(enable)
         {

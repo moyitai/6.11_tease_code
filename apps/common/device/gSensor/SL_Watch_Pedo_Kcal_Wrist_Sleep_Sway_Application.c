@@ -197,6 +197,10 @@ u8 get_wrist_detect_result(void)
 {
 	return SL_CLOCK_STATUS;
 }
+u8 get_fall_detect_result(void)
+{
+	return SL_CLOCK_STATUS;
+}
 unsigned char SL_MCU_SLEEP_ALGO_FUNCTION(void);
 unsigned int  SL_SC7A20_PEDO_KCAL_WRIST_SLEEP_SWAY_ALGO(void)
 {
