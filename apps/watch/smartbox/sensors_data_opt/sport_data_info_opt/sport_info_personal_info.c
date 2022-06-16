@@ -10,7 +10,8 @@
 
 void sport_info_personal_info_attr_set(void *priv, u8 attr, u8 *data, u16 len)
 {
-    printf("%s", __func__);
+    printf("%s",__func__);
+    put_buf(data,len);
     personal_information info = {0};
     memcpy(&info, data, sizeof(personal_information));
     info.height = ((u8 *)&info.height)[0] << 8 | ((u8 *)&info.height)[1];

@@ -14,6 +14,8 @@
 
 void sport_info_sedentary_attr_set(void *priv, u8 attr, u8 *data, u16 len)
 {
+    printf("%s",__func__);
+    put_buf(data,len);
     u8 sedentary_switch = data[0];
     u8 sedentary_mode = data[1];
 

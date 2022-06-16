@@ -19,6 +19,8 @@ enum {
 
 void sport_info_sleep_detection_attr_set(void *priv, u8 attr, u8 *data, u16 len)
 {
+    printf("%s",__func__);
+    put_buf(data,len);
     u8 sleep_switch = data[0];
     sleep_detection_t sleep_detection = {0};
     memcpy(&sleep_detection, data + 1, sizeof(sleep_detection_t));

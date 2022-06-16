@@ -13,6 +13,8 @@ return get_bt_reminder;
 }
 void sport_info_bt_disconn_attr_set(void *priv, u8 attr, u8 *data, u16 len)
 {
+    printf("%s",__func__);
+    put_buf(data,len);
     u8 bt_reminder_switch = data[0];
     u8 bt_reminder_mode = data[1];
     get_bt_reminder = bt_reminder_switch;

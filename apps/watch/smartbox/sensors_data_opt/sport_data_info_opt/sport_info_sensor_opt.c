@@ -11,7 +11,8 @@
 
 void sport_info_sensor_opt_attr_set(void *priv, u8 attr, u8 *data, u16 len)
 {
-    printf("%s", __func__);
+    printf("%s",__func__);
+    put_buf(data,len);
     u8 func_switch = data[0];
     u8 sensors_switch = data[1];
     printf("sensor-switch %x", sensors_switch);

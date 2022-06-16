@@ -1308,7 +1308,6 @@ static u8 set_watch_sport_initial_value_before(void)   //初始化前的参数�
     memset(&info, 0, sizeof(personal_information));
     sport_personal_info_get(&info);
     u8 age = watch_time_age(info.birth_y, info.birth_m, info.birth_d);
-     printf("asdfaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa%d %d %d %d", info.height, info.weight, info.gender, age); 
     if (!info.height) {
         PI.height = HEIGHT;
     } else {
@@ -1598,7 +1597,7 @@ int sensor_switch_set(unsigned char type, unsigned char enable)
     }
     return SUCCESS;
 }
-//myself diy
+//myself diy wrist
 static u8 wrist_detect_mode_one_500;
 static u8 wrist_detect_mode_two_500;
 static u8 wrist_mode_time[4] = {0};
@@ -1626,18 +1625,18 @@ static void wrist_rist_detect_1st(void)
     wakeup_screen();
 }
 
-void use_1st_mode(void)
+void wrist_use_1st_mode(void)
 {
-    printf("open wrist detete mode 1"); //模式一 全天开启
-if(wrist_detect_mode_two_500)//如果打开模式二定时器 先关闭
-{
-    sys_timer_del(wrist_detect_mode_two_500);
-    wrist_detect_mode_two_500 = 0;
-}
-if(!wrist_detect_mode_one_500){ //如果没有打开模式1 的定时器打开
+    printf("%s",__func__); //模式一 全天开启
+    if(wrist_detect_mode_two_500)//如果打开模式二定时器 先关闭
+    {
+        sys_timer_del(wrist_detect_mode_two_500);
+        wrist_detect_mode_two_500 = 0;
+    }
+    if(!wrist_detect_mode_one_500){ //如果没有打开模式1 的定时器打开
 
-    wrist_detect_mode_one_500 = sys_timer_add(NULL,wrist_rist_detect_1st, 500);
-}
+        wrist_detect_mode_one_500 = sys_timer_add(NULL,wrist_rist_detect_1st, 500);
+    }
 }
 static void wrist_raise_detect_sed(void)
 {
@@ -1653,6 +1652,7 @@ static void wrist_raise_detect_sed(void)
             //printf("close this function 111 ");
         } else {
             if ((n_time.hour * 60 + n_time.min) >= (wrist_mode_time[0] * 60 + wrist_mode_time[1])) {
+              
                 wakeup_screen();
                 //printf("open this function 111 ");
             } else {
@@ -1674,7 +1674,7 @@ static void wrist_raise_detect_sed(void)
     }
 
 }
-void use_2nd_mode(void)
+void wrist_use_2nd_mode(void)
 {
     if(wrist_detect_mode_one_500)//如果打开模式一定时器 先关闭模式一定时器
     {
@@ -1682,12 +1682,10 @@ void use_2nd_mode(void)
         wrist_detect_mode_one_500 = 0;
     }
     if(!wrist_detect_mode_two_500){
-        printf("tran time to the timer");
         wrist_detect_mode_two_500 = sys_timer_add(NULL,wrist_raise_detect_sed, 500);
-        printf("tran time to the timer11111");
     }
 }
-void use_3rd_mode(void)
+void wrist_use_3rd_mode(void)
 {
     if(wrist_detect_mode_one_500){
         sys_timer_del(wrist_detect_mode_one_500);
@@ -1726,12 +1724,13 @@ void fall_wakeup_screen(void)
 }
 static void fall_rist_detect_1st(void)
 {
+    printf("%s",__func__);
     fall_wakeup_screen();
 }
 
 void fall_use_1st_mode(void)
 {
-    printf("open fall detete mode 1"); //模式一 全天开启
+    //printf("open fall detete mode 1"); //模式一 全天开启
 if(fall_detect_mode_two_500)//如果打开模式二定时器 先关闭
 {
     sys_timer_del(fall_detect_mode_two_500);
@@ -1749,6 +1748,7 @@ if(!fall_detect_mode_one_500){ //如果没有打开模式1 的定时器打开
 }
 static void fall_raise_detect_sed(void)
 {
+    printf("%s",__func__);
     if(get_fall_detect_result())
     {
         printf("fall shake !!!!!!!!!!!!!!!!!!!!!!");
@@ -1772,7 +1772,7 @@ void fall_use_2nd_mode(void)
 }
 void fall_raise_detect_3rd(void)
 {
-   
+    printf("%s",__func__);
     if(get_fall_detect_result())
     {
     printf("fall call mergency !!!!!!!!");
@@ -1785,7 +1785,7 @@ void fall_raise_detect_3rd(void)
 }
 void fall_use_3rd_mode(void)
 {
-
+    printf("%s",__func__);
     if(fall_detect_mode_one_500){
         sys_timer_del(fall_detect_mode_one_500);
         fall_detect_mode_one_500 = 0;
@@ -1797,14 +1797,11 @@ void fall_use_3rd_mode(void)
     }
     if(!fall_detect_mode_three_500){
         fall_detect_mode_three_500 = sys_timer_add(NULL,fall_raise_detect_3rd, 500);
-        printf("tran time to the timer333");
     }
-    printf("close fall detete");
-    printf("call phone !!!!!!!!!!!");
 }
 void fall_use_off_mode(void)
 {
-
+    printf("%s",__func__);
     if(fall_detect_mode_one_500){
         sys_timer_del(fall_detect_mode_one_500);
         fall_detect_mode_one_500 = 0;
@@ -1820,8 +1817,216 @@ void fall_use_off_mode(void)
     }
     printf("close fall detete");
 }
+//myself diy sleep
+static u8 sleep_detect_mode_one_500;
+static u8 sleep_detect_mode_two_500;
+static u8 sleep_mode_time[4] = {0};
+       int cnt2 = 0;
+void sleep_count_execution(void)
+{ 
+    //printf("sleep_count_execution");
+    if(get_sleep_detect_result())
+    {
+        cnt2++;
+        printf("sleep count plus %d",cnt2);
+    }
+}
+static void sleep_rist_detect_1st(void)
+{
+    sleep_count_execution();
 
+}
 
+void sleep_use_1st_mode(void)
+{
+    printf("%s",__func__); //模式一 全天开启
+    if(sleep_detect_mode_two_500)//如果打开模式二定时器 先关闭
+    {
+        sys_timer_del(sleep_detect_mode_two_500);
+        sleep_detect_mode_two_500 = 0;
+    }
+    if(!sleep_detect_mode_one_500){ //如果没有打开模式1 的定时器打开
+
+        sleep_detect_mode_one_500 = sys_timer_add(NULL,sleep_rist_detect_1st, 500);
+    }
+}
+static void sleep_raise_detect_sed(void)
+{
+     u8 raise_detect = 0;
+    struct sys_time n_time;
+    //watch_file_get_sys_time(&n_time);
+    printf("%s",__func__);
+    //printf("time->hour:time->min %d:%d",n_time.hour,n_time.min);
+    //printf("sleep_mode_time[0]:sleep_mode_time[1] %d:%d",sleep_mode_time[0],sleep_mode_time[1]);
+    //printf("sleep_mode_time[2]:sleep_mode_time[3] %d:%d",sleep_mode_time[2],sleep_mode_time[3]);
+    if ((sleep_mode_time[0] * 60 + sleep_mode_time[1]) < (sleep_mode_time[2] * 60 + sleep_mode_time[3])) { // -0--s-1-e--0-开始时间＜结束时间，按自然时间处理
+        if ((n_time.hour * 60 + n_time.min) >= (sleep_mode_time[2] * 60 + sleep_mode_time[3])) {
+            //printf("close this function 111 ");
+        } else {
+            if ((n_time.hour * 60 + n_time.min) >= (sleep_mode_time[0] * 60 + sleep_mode_time[1])) {
+                sleep_count_execution();
+                printf("open this function 111 ");
+            } else {
+                //printf("close this function 222");
+            }
+        }
+    } else {	// -1--e-0-s--1-结束时间小于开始时间，按+1day处理
+        if ((n_time.hour * 60 + n_time.min) >= (sleep_mode_time[0] * 60 + sleep_mode_time[1])) {
+            sleep_count_execution();
+            printf("open this function 222 ");
+        } else {
+            if ((n_time.hour * 60 + n_time.min) >= (sleep_mode_time[2] * 60 + sleep_mode_time[3])) {
+                   // printf("close this function 333 ");
+            } else {
+                    printf("open this function 333 ");
+                    sleep_count_execution();
+            }
+        }
+    }
+
+}
+void sleep_use_2nd_mode(void)
+{
+    if(sleep_detect_mode_one_500)//如果打开模式一定时器 先关闭模式一定时器
+    {
+        sys_timer_del(sleep_detect_mode_one_500);
+        sleep_detect_mode_one_500 = 0;
+    }
+    if(!sleep_detect_mode_two_500){
+        //printf("tran time to the timer");
+        sleep_detect_mode_two_500 = sys_timer_add(NULL,sleep_raise_detect_sed, 500);
+        //printf("tran time to the timer11111");
+    }
+}
+void sleep_use_3rd_mode(void)
+{
+    if(sleep_detect_mode_one_500){
+        sys_timer_del(sleep_detect_mode_one_500);
+        sleep_detect_mode_one_500 = 0;
+    }
+    if(sleep_detect_mode_two_500)
+    {
+        sys_timer_del(sleep_detect_mode_two_500);
+        sleep_detect_mode_two_500 = 0;
+    }
+    printf("close sleep detete");
+}
+//myself diy  sedentary
+static u8 sedentary_detect_mode_one_500;
+static u8 sedentary_detect_mode_two_500;
+static u8 sedentary_mode_time[5] = {0};
+       int cnt1 = 0;
+void sedentary_count_execution(void)
+{
+    if(get_sedentary_detect_result())
+    {
+        cnt1++;
+        printf("sedentary count plus %d",cnt1);
+    }
+}
+static void sedentary_rist_detect_1st(void)
+{
+    sedentary_count_execution();
+}
+
+void sedentary_use_1st_mode(void)
+{
+    if(sedentary_detect_mode_two_500)//如果打开模式二定时器 先关闭
+    {
+        sys_timer_del(sedentary_detect_mode_two_500);
+        sedentary_detect_mode_two_500 = 0;
+    }
+    if(!sedentary_detect_mode_one_500){ //如果没有打开模式1 的定时器打开
+
+        sedentary_detect_mode_one_500 = sys_timer_add(NULL,sedentary_rist_detect_1st, 500);
+    }
+}
+static void sedentary_raise_detect_sed(void)
+{
+     u8 raise_detect = 0;
+    struct sys_time n_time;
+    watch_file_get_sys_time(&n_time);
+    printf("%s",__func__);
+    //printf("time->hour:time->min %d:%d",n_time.hour,n_time.min);
+    //printf("sedentary_mode_time[0]:sedentary_mode_time[1] %d:%d",sedentary_mode_time[0],sedentary_mode_time[1]);
+    //printf("sedentary_mode_time[2]:sedentary_mode_time[3] %d:%d",sedentary_mode_time[2],sedentary_mode_time[3]);
+    //printf("sedentary_mode_time[4]%d",sedentary_mode_time[4]);
+    if ((sedentary_mode_time[0] * 60 + sedentary_mode_time[1]) < (sedentary_mode_time[2] * 60 + sedentary_mode_time[3])) { // -0--s-1-e--0-开始时间＜结束时间，按自然时间处理
+        if ((n_time.hour * 60 + n_time.min) >= (sedentary_mode_time[2] * 60 + sedentary_mode_time[3])) {
+             printf("stop time 111");
+            //printf("close this function 111 ");
+        } else {
+            if ((n_time.hour * 60 + n_time.min) >= (sedentary_mode_time[0] * 60 + sedentary_mode_time[1])) {
+                printf("stop time 222");
+                  if(sedentary_mode_time[4])
+                  {
+                    if(((n_time.hour * 60 + n_time.min) >= 12*60) && ((n_time.hour * 60 + n_time.min)<= 14*60))
+                    return;
+                  }else{
+                    sedentary_count_execution();
+                    printf("open this function 111 ");
+                  }
+            } else {
+                 printf("stop time 333");
+                //printf("close this function 222");
+            }
+        }
+    } else {	// -1--e-0-s--1-结束时间小于开始时间，按+1day处理
+        if ((n_time.hour * 60 + n_time.min) >= (sedentary_mode_time[0] * 60 + sedentary_mode_time[1])) {
+                 printf("stop time 444");
+                if(sedentary_mode_time[4])
+                  {
+                    if(((n_time.hour * 60 + n_time.min) >= 12*60) && ((n_time.hour * 60 + n_time.min)<= 14*60))
+                    return;
+                  }else{
+                    sedentary_count_execution();
+                    printf("open this function 222 ");
+                  }
+
+        } else {
+            if ((n_time.hour * 60 + n_time.min) >= (sedentary_mode_time[2] * 60 + sedentary_mode_time[3])) {
+                printf("stop time 555");
+                   // printf("close this function 333 ");
+            } else {
+                printf("stop time 666");
+                if(sedentary_mode_time[4])
+                  {
+                    if(((n_time.hour * 60 + n_time.min) >= 12*60) && ((n_time.hour * 60 + n_time.min)<= 14*60))
+                    return;
+                  }else{
+                    sedentary_count_execution();
+                    printf("open this function 333 ");
+                  }
+            }
+        }
+    }
+
+}
+void sedentary_use_2nd_mode(void)
+{
+    printf("%s",__func__);
+    if(sedentary_detect_mode_one_500)//如果打开模式一定时器 先关闭模式一定时器
+    {
+        sys_timer_del(sedentary_detect_mode_one_500);
+        sedentary_detect_mode_one_500 = 0;
+    }
+    if(!sedentary_detect_mode_two_500){
+        sedentary_detect_mode_two_500 = sys_timer_add(NULL,sedentary_raise_detect_sed, 500);
+    }
+}
+void sedentary_use_3rd_mode(void)
+{
+    printf("%s",__func__);
+    if(sedentary_detect_mode_one_500){
+        sys_timer_del(sedentary_detect_mode_one_500);
+        sedentary_detect_mode_one_500 = 0;
+    }
+    if(sedentary_detect_mode_two_500)
+    {
+        sys_timer_del(sedentary_detect_mode_two_500);
+        sedentary_detect_mode_two_500 = 0;
+    }
+}
 int detection_init(void)
 {
     printf("%s1111",__func__);
@@ -1829,61 +2034,88 @@ int detection_init(void)
     u16 mode_len = 0;
     u8 enable;
     u8 buf[20];
-    sport_raise_wrist_get((raise_wrist_t *)buf);
-    printf("%d %d %d %d",buf[0],buf[1],buf[2],buf[3]);
+    // printf("wrist switch = %d",sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_RAISE_WRIST));
+    // printf("sedentary switch = %d",sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_SEDENTARY));
+    // printf("fall switch = %d",sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_FALL_DETECTION));
+    // printf("sleep switch = %d",sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_SLEEP_DETECTION));
+    // printf("disconnect switch = %d",sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_BT_DISCONN));
 //WRIST
+    sport_raise_wrist_get((raise_wrist_t *)buf);
     if (sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_RAISE_WRIST)) {
-        printf("%s2222",__func__);
-        if(enable == SWITCH_ON ){
-        printf("in 1st");
-        use_1st_mode();
-        }
+       enable = SWITCH_ON;
+       printf("swich in 1nd");
+       wrist_use_1st_mode();
+        
         
     } else if (sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_RAISE_WRIST_CUSTOMIZE)) {
-        printf("%s333",__func__);
-        if(enable = SWITCH_TIMING)
-        {
-            printf("in 2nd");
-            wrist_mode_time[0] = buf[0];
-            wrist_mode_time[1] = buf[1];
-            wrist_mode_time[2] = buf[2];
-            wrist_mode_time[3] = buf[3];
-            use_2nd_mode();
-        }
+        enable =SWITCH_TIMING;
+        printf("swich in 2nd");
+        wrist_mode_time[0] = buf[0];
+        wrist_mode_time[1] = buf[1];
+        wrist_mode_time[2] = buf[2];
+        wrist_mode_time[3] = buf[3];
+        wrist_use_2nd_mode();
+        
     } else {
-        printf("%s4444",__func__);
-        if(enable == SWITCH_OFF)
-        {
-             printf("in 3rd");
-             use_3rd_mode();
-        }
+        enable = SWITCH_OFF;
+        printf("swich in 3rd");
+        wrist_use_3rd_mode();
+        
     }
     mode_len = sport_info_record_get(SPORT_INFO_MODE_TYPE_RAISE_WRIST, &mode_data);
+    printf("wrist mode:enable  %d:%d",mode_data[0],enable);
     if (mode_data && mode_len) {
-         printf("%s55555",__func__);
         save_detection_set(WRIST, enable, mode_data[0], buf);
     }
 
 //SLEEP
-    if (sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_SLEEP_DETECTION)) {
-        enable = SWITCH_ON;
-    } else if (sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_SLEEP_DETECTION_CUSTOMIZE)) {
-        enable = SWITCH_TIMING;
-    } else {
-        enable = SWITCH_OFF;
-    }
     sport_sleep_detection_get((sleep_detection_t *)buf);
+    if (sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_SLEEP_DETECTION)) {
+        enable =SWITCH_ON;
+        printf("sleep in 1st");
+        sleep_use_1st_mode();
+    } 
+    else if (sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_SLEEP_DETECTION_CUSTOMIZE)) {
+        enable =SWITCH_TIMING;
+        printf("sleep in 2st");
+        sleep_mode_time[0] = buf[0];
+        sleep_mode_time[1] = buf[1];
+        sleep_mode_time[2] = buf[2];
+        sleep_mode_time[3] = buf[3];
+        sleep_use_2nd_mode();
+        
+    } 
+    else {
+        enable = SWITCH_OFF;
+        printf("sleep in 3st");
+        sleep_use_3rd_mode();
+        
+    }
+    
     if (mode_data && mode_len) {
         save_detection_set(SLEEP, enable, 0, buf);
     }
 //sendentary
+    sport_sedentary_get((sedentary_t *)buf);//sedentary_buf[0]为午休免打扰
     if (sport_info_swtich_record_get(SPORT_INFO_SWTICH_TYPE_SEDENTARY)) {
         enable = SWITCH_TIMING;
-    } else {
+        put_buf(buf,5);
+        printf("sendentary in 2nd ");
+        sedentary_mode_time[0] = buf[1];
+        sedentary_mode_time[1] = buf[2];
+        sedentary_mode_time[2] = buf[3];
+        sedentary_mode_time[3] = buf[4];
+        sedentary_mode_time[4] = buf[0];
+        sedentary_use_2nd_mode();
+    }else {
         enable = SWITCH_OFF;
+        printf("sendentary in 3rd ");
+        sedentary_use_3rd_mode();
+
+       
     }
-    sport_sedentary_get((sedentary_t *)buf);//sedentary_buf[0]为午休免打扰
     mode_len = sport_info_record_get(SPORT_INFO_MODE_TYPE_SEDENTARY, &mode_data);
+    printf("sendentary mode:enable  %d:%d",mode_data[0],enable);
     if (mode_data && mode_len) {
         save_detection_set(SEDENTARY, enable, mode_data[0], buf + 1);
     }
@@ -1893,13 +2125,27 @@ int detection_init(void)
     } else {
         enable = SWITCH_OFF;
     }
-    /* printf("%s", __func__); */
     memset(buf, 0, 20);
     sport_fall_detection_get((fall_detection_t *)buf);
     if (buf[0] != 0) {
         set_emergency_contact_number(buf + 1, buf[0]);
     }
     mode_len = sport_info_record_get(SPORT_INFO_MODE_TYPE_FALL_DETECTION, &mode_data);
+    printf("fall mode:enable  %d:%d",mode_data[0],enable);
+    if(enable){
+        if(mode_data[0] == 0)
+        {
+            printf("fall in 1st ");
+            fall_use_1st_mode();
+        }else if(mode_data[0] == 1)
+        {
+            printf("fall in 2nd ");
+            fall_use_2nd_mode();
+        }else{
+            printf("fall in 3rd ");
+            fall_use_3rd_mode();
+        }
+    }
     if (mode_data && mode_len) {
         memset(buf, 0, 20);
         save_detection_set(FALL, enable, mode_data[0], buf);
@@ -1911,7 +2157,6 @@ int detection_init(void)
         enable = SWITCH_OFF;
     }
     sport_exercise_heart_rate_get((e_heart_rate *)buf);
-    /* printf("%s %d",__func__,buf[0]); */
     if (buf[0] == 0) {
         buf[0] = 120; //不设置数值时，默认120触发
     }
@@ -1933,7 +2178,6 @@ int detection_init(void)
     mode_len = sport_info_record_get(SPORT_INFO_MODE_TYPE_CONTINUOUS_HEART_RATE, &mode_data);
     if (mode_data && mode_len) {
         sport_exercise_heart_rate_get((e_heart_rate *)buf);
-        /* printf("%s %d",__func__,buf[0]); */
         if (buf[0] == 0) {
             buf[0] = 120; //不设置数值时，默认120触发
         }
@@ -1955,28 +2199,25 @@ int detection_ioctrl(int arg_num, int *arg) //打开检测功能，注册回调�
 
     switch (arg_num) {
     case 5:
-        hr_threshold = arg[4]; //心率阈值
+            hr_threshold = arg[4]; //心率阈值
     case 4:
-        time[0] = (arg[3] >> 24) & 0xff;
-        time[1] = (arg[3] >> 16) & 0xff;
-        time[2] = (arg[3] >> 8) & 0xff;
-        time[3] = (arg[3]) & 0xff;
+            time[0] = (arg[3] >> 24) & 0xff;
+            time[1] = (arg[3] >> 16) & 0xff;
+            time[2] = (arg[3] >> 8) & 0xff;
+            time[3] = (arg[3]) & 0xff;
     case 3:
-        response_mode = arg[2];
+            response_mode = arg[2];
     case 2:
-        enable = arg[1];
+            enable = arg[1];
     case 1:
-        type = arg[0];
-
-        break;
+            type = arg[0];
+            break;
     }
     printf("%s arg_num=%d \n type=%d,enable=%d,response_mode=%d,start_time=%d:%d endtime=%d:%d", \
-           __func__, arg_num,		type,	enable,	response_mode,	time[0], time[1], time[2], time[3]);
+    __func__, arg_num,		type,	enable,	response_mode,	time[0], time[1], time[2], time[3]);
     switch (type) {
     case WRIST:
-     //save_detection_set(type, enable, response_mode, time);
      {
-
         wrist_mode_time[0] = (arg[3] >> 24) & 0xff;
         wrist_mode_time[1] = (arg[3] >> 16) & 0xff;
         wrist_mode_time[2] = (arg[3] >> 8) & 0xff;
@@ -1986,19 +2227,19 @@ int detection_ioctrl(int arg_num, int *arg) //打开检测功能，注册回调�
             if(enable == 1 )
             {
                 printf("open wrist detete mode 1"); //模式一 全天开启
-                use_1st_mode();
+                wrist_use_1st_mode();
                 break;
                 }
             else if(enable == 2)//模式二
             {
                 printf("open wrist detete mode 2");
-                use_2nd_mode();
+                wrist_use_2nd_mode();
                 break;
             }
         }
         else{
             printf("open wrist detete mode 3");
-            use_3rd_mode();
+            wrist_use_3rd_mode();
             break;
         }
     }
@@ -2020,7 +2261,7 @@ int detection_ioctrl(int arg_num, int *arg) //打开检测功能，注册回调�
                     fall_use_2nd_mode();
                     break;
                 }
-                else //模式二
+                else //模式三
                 {
                     printf("open fall detete mode 3");
                     fall_use_3rd_mode();
@@ -2037,22 +2278,55 @@ int detection_ioctrl(int arg_num, int *arg) //打开检测功能，注册回调�
         break;
 
     case SEDENTARY:
-        if(enable)
         {
-            printf("open SEDENTARY detete");
-        }else{
-            printf("close SEDENTARY detete");
+            sedentary_mode_time[0] = (arg[3] >> 24) & 0xff;
+            sedentary_mode_time[1] = (arg[3] >> 16) & 0xff;
+            sedentary_mode_time[2] = (arg[3] >> 8) & 0xff;
+            sedentary_mode_time[3] = (arg[3]) & 0xff;
+            sedentary_mode_time[4] = arg[4];
+            if(enable)
+            {
+                printf("open SEDENTARY detete mode 2");
+                sedentary_use_2nd_mode();
+                break;
+            }
+            else{
+                printf("open wrist detete mode 3");
+                sedentary_use_3rd_mode();
+                break;
+            }
         }
+        save_detection_set(type, enable, response_mode, time);
         break;
     case SLEEP:
-        //save_detection_set(type, enable, response_mode, time);
-        printf("into sleep detect mode ");
-        if(enable)
         {
-            printf("open SLEEP detete");
-        }else{
-            printf("close SLEEP detete");
+            sleep_mode_time[0] = (arg[3] >> 24) & 0xff;
+            sleep_mode_time[1] = (arg[3] >> 16) & 0xff;
+            sleep_mode_time[2] = (arg[3] >> 8) & 0xff;
+            sleep_mode_time[3] = (arg[3]) & 0xff;
+            if(enable)
+            {
+                if(enable == 1 )
+                {
+                    printf("open sleep detete mode 1"); //模式一 全天开启
+                    sleep_use_1st_mode();
+                    break;
+                    }
+                else if(enable == 2)//模式二
+                {
+                    printf("open sleep detete mode 2");
+                    sleep_use_2nd_mode();
+                    break;
+                }
+            }
+            else{
+                printf("open sleep detete mode 3");
+                sleep_use_3rd_mode();
+                break;
         }
+        
+        }
+        save_detection_set(type, enable, response_mode, time);
         break;
     case EXERCISE_HEART_RATE://仅运动时有效
         printf("into EXERCISE_HEART_RATE detect mode ");
