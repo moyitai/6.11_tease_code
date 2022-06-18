@@ -17,17 +17,26 @@ void sport_info_fall_detection_attr_set(void *priv, u8 attr, u8 *data, u16 len)
     u8 fall_mode = data[1];
     put_buf(data,len);
     fall_detection_t fall_detection = {0};
-    printf("data[2] = %d %d %d %d %d %d %d %d %d %d %d %d",data[2],data[3],data[4],data[5],data[6], \
-    data[7],data[8],data[9],data[10],data[11],data[12],data[13]);
+    u8 buf[21] = {0};
+    u8 had_some_value = 0;
+    u8 j = 0;
     if (2 == fall_mode) {
-        if(data[2])
+        for(u8 i=3;i<len;i++) //不管传进来的值有多少 从第三位开始，不等于0 EF 就记录
         {
-            printf("data[2] = %d",data[2]);
-            memcpy(&fall_detection, data + 2, data[2] + 1);
-        }else{
-            printf("get vm value put phone number set");
+            if((data[i]!=0 && data[i]!=0xEF) )
+            {
+                buf[j+1] = data[i];
+                j++;
+            }
         }
+        if(buf[5]!=0){//判断第五位是否有值，有值说明有号码传入 如果第五位都没有值 那就都是0
+            had_some_value = 1;
+            buf[0] = j;
+            memcpy(&fall_detection, buf, j+1); //有手机码 写入fall_detection 没有就不动
+        }
+        put_buf(buf,j+1);
     }
+
     struct watch_algo algo_hd;
     watch_algo_handle_get(&algo_hd);
     int arg[6];
@@ -41,8 +50,8 @@ void sport_info_fall_detection_attr_set(void *priv, u8 attr, u8 *data, u16 len)
     sport_info_mode_record_update(SPORT_INFO_MODE_TYPE_FALL_DETECTION, fall_mode);
     
     if (2 == fall_mode ) {
-        if(data[2]){
-            printf("data[2] = %d",data[2]);
+        if(had_some_value){//判断是否有号码写入fall_detection这个结构体  有就写VM 没有就获取VM的号码进行设置
+            had_some_value = 0;
             sport_info_write_vm(VM_SPORT_INFO_FALL_DETECTION, (u8 *)&fall_detection, sizeof(fall_detection_t));
             set_emergency_contact_number((u8 *)&fall_detection.phone_num, fall_detection.phone_len); //保存联系人
         }
@@ -51,7 +60,7 @@ void sport_info_fall_detection_attr_set(void *priv, u8 attr, u8 *data, u16 len)
             memset(buf, 0, 20);
             sport_fall_detection_get((fall_detection_t *)buf);
             printf("buf = %d %d %d %d %d %d %d %d %d %d %d %d",buf[2],buf[3],buf[4] \
-        ,buf[5],buf[6],buf[7],buf[8],buf[9],buf[10],buf[11]);
+            ,buf[5],buf[6],buf[7],buf[8],buf[9],buf[10],buf[11]);
             if (buf[0] != 0) {
                 set_emergency_contact_number(buf + 1, buf[0]);
             }
@@ -65,7 +74,7 @@ void sport_info_fall_detection_attr_set(void *priv, u8 attr, u8 *data, u16 len)
 
 u32 sport_info_fall_detection_attr_get(void *priv, u8 attr, u8 *buf, u16 buf_size, u32 offset)
 {
-    printf("%s777777777777", __func__);
+    printf("%s", __func__);
     u32 rlen = 0;
 
     u8 *fall_data = zalloc(2 + 21);
@@ -82,8 +91,8 @@ u32 sport_info_fall_detection_attr_get(void *priv, u8 attr, u8 *buf, u16 buf_siz
     mode_len = 2;
     if (2 == fall_data[1]) {
         sport_fall_detection_get((fall_detection_t *)(fall_data + 2));
-        printf("fall_data = %d %d %d %d %d %d %d %d %d %d %d %d",fall_data[2],fall_data[3],fall_data[4] \
-        ,fall_data[5],fall_data[6],fall_data[7],fall_data[8],fall_data[9],fall_data[10],fall_data[11]);
+        // printf("fall_data = %d %d %d %d %d %d %d %d %d %d %d %d",fall_data[2],fall_data[3],fall_data[4] \
+        // ,fall_data[5],fall_data[6],fall_data[7],fall_data[8],fall_data[9],fall_data[10],fall_data[11]);
         mode_len += sizeof(fall_detection_t);
     }
     rlen = add_one_attr(buf, buf_size, offset, attr, fall_data, mode_len);
