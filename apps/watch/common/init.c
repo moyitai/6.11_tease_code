@@ -77,7 +77,7 @@ static void check_power_on_key(void)
         if (get_power_on_status()) {
             putchar('+');
             delay_10ms_cnt++;
-            if (delay_10ms_cnt > 70) {
+            if (delay_10ms_cnt > 70) {  //开关机时间设置
                 return;
             }
         } else {
