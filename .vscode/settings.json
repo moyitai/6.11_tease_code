@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "result_str_index.h": "c",
+        "result_pic_index.h": "c",
+        "sport_info_sleep_detection.h": "c",
+        "watch_common.h": "c",
+        "iic_soft.h": "c",
+        "sport_data_func.h": "c"
+    }
+}
