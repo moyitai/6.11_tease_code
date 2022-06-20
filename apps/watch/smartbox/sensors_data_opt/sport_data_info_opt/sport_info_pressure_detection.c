@@ -9,6 +9,8 @@
 
 void sport_info_pressure_detection_attr_set(void *priv, u8 attr, u8 *data, u16 len)
 {
+    printf("%s",__func__);
+    put_buf(data,len);
     u8 press_switch = data[0];
     u8 press_mode = data[1];
     sport_info_switch_record_update(SPORT_INFO_SWTICH_TYPE_PRESSURE_DETECTION, press_switch, 1);

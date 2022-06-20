@@ -178,7 +178,6 @@ void ui_sysinfo_init()
     ui_voice_mute(get_ui_sys_param(SysVoiceMute));
     card_set_num = get_ui_sys_param(CardSetNum);
     u8 menu = get_ui_sys_param(MenuStyle);
-    printf("111111111111111111111111111111%s %d",__func__,menu);
     if(menu == 0)
     {
         ui_show_page_list[1] = ID_WINDOW_VMENU;

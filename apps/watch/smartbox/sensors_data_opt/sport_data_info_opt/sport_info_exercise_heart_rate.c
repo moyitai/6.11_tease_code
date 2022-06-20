@@ -13,6 +13,8 @@
 
 void sport_info_exercise_heart_rate_attr_set(void *priv, u8 attr, u8 *data, u16 len)
 {
+    printf("%s",__func__);
+    put_buf(data,len);
     u8 heart_rate_switch = data[0];
     e_heart_rate heart_rate = {0};
     memcpy(&heart_rate, data + 1, sizeof(heart_rate));

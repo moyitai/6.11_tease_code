@@ -193,6 +193,14 @@ struct sleep_time{
 	u16 sleep_min;
 	u8  sleep_hour;
 };
+u8 get_sedentary_detect_result(void)
+{
+	return SL_CLOCK_STATUS;
+}
+u8 get_sleep_detect_result(void)
+{
+	return SL_CLOCK_STATUS;
+}
 u8 get_wrist_detect_result(void)
 {
 	return SL_CLOCK_STATUS;
