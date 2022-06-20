@@ -1,3 +1,16 @@
 *.o
 *.d
 
+cpu/br28/sdk_used_list.used
+cpu/br28/sdk.ld
+cpu/br28/tools/app.bin
+cpu/br28/tools/isd_config.ini
+cpu/br28/tools/sdk.elf
+cpu/br28/tools/sdk.elf.0.2.internalize.bc
+cpu/br28/tools/sdk.elf.0.4.opt.bc
+cpu/br28/tools/sdk.elf.resolution.txt
+cpu/br28/tools/sdk.map
+cpu/br28/tools/download/watch/app.bin
+cpu/br28/tools/download/watch/res.bin
+cpu/br28/tools/download/watch/update.ufw
+cpu/br28/tools/download/watch/upgrade.zip
