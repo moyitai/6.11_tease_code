@@ -130,8 +130,6 @@ static const u8 lcd_mcu_jd5858_zhaoyu_cmdlist[] ALIGNED(4) = {
     //SETSTBA
     _BEGIN_, 0xB2, 0x14, 0x14, _END_,
 
-    
-
     //SETRGBCYC1
     _BEGIN_, 0xB8, 0x74, 0x44, 0x00, 0x01, 0x01, 0x00, 0x01, 0x01, 0x00, 0x27, 0x99, 0x10, 0xA3, 0x15, 0x11, 0x1F, 0x91, 0x21, 0x9B, 0x0D, 0x22, 0x17, 0x89, 0x32, 0x93, 0x05, 0x00, 0x00, 0x00, _END_,
 
@@ -197,9 +195,6 @@ static const u8 lcd_mcu_jd5858_zhaoyu_cmdlist[] ALIGNED(4) = {
     //---------------- PAGE2 --------------
     _BEGIN_, 0xDE, 0x02, _END_,
 
-    //_BEGIN_, 0xDE, 0x04,_END_,
-
-
     //OSC DIV
     _BEGIN_, 0xC5, 0x03, _END_,
 
@@ -226,7 +221,7 @@ static const u8 lcd_mcu_jd5858_zhaoyu_cmdlist[] ALIGNED(4) = {
     //The host could send 1st image at this time
     //DISP ON
     _BEGIN_, 0x29, _END_,     // DSPON
-    _BEGIN_, REGFLAG_DELAY, 200, _END_,
+    _BEGIN_, REGFLAG_DELAY, 120, _END_,
 
 };
 
@@ -447,8 +442,8 @@ static void lcd_mcu_jd5858_zhaoyu_exitsleep(void)
 {
     //TODO
     lcd_write_cmd(0x11, NULL, 0);
-    delay_2ms(10 / 2);	// delay 120ms
     lcd_write_cmd(0x29, NULL, 0);
+    delay_2ms(60);
 }
 
 
