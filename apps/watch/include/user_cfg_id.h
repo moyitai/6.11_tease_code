@@ -149,6 +149,8 @@
 #define     VM_WATCH_EX_END              VM_WATCH_EX5//拓展表盘信息
 
 #define     VM_UI_SYS_INFO				 197
+#define     USR_SET_FLAG				 198
+
 #endif//(VM_ITEM_MAX_NUM > 128)
 
 #endif /* #ifndef _USER_CFG_ID_H_ */
