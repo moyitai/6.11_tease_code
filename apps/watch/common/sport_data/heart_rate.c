@@ -54,9 +54,11 @@ static int heart_rate_file_write(void)
 {
     printf("%s %d", __func__, __LINE__);
     struct sys_time ntime;
+    u8 usr_data[10]={0};
     watch_file_get_sys_time(&ntime);
 #if TCFG_NOR_VM
     if (hrfiledata.file_status == HR_FILE_NULL) { //当日数据未记录
+        printf("func : %s , line = %d" , __func__ , __LINE__);
         u8 fbuf[11];//写文件头
         fbuf[0] = 0x03;
         fbuf[1] = (ntime.year >> 8) & 0xff;
@@ -69,7 +71,7 @@ static int heart_rate_file_write(void)
         fbuf[8] = HR_TIME_INTERVAL; //存储时间间隔
         fbuf[9] = 0xff; //保留位1
         fbuf[10] = 0xff; //保留位2
-        /*printf("filetype=%d,year=%d,month=%d,day=%d,interval=%d",fbuf[0],ntime.year,ntime.month,ntime.day,HR_TIME_INTERVAL);*/
+        printf("filetype=%d,year=%d,month=%d,day=%d,interval=%d",fbuf[0],ntime.year,ntime.month,ntime.day,HR_TIME_INTERVAL);
         if (flash_common_get_total(get_flash_vm_hd(F_TYPE_HEART)) == get_flash_vm_number_max(F_TYPE_HEART)) {
             printf("total==%d", flash_common_get_total(get_flash_vm_hd(F_TYPE_HEART)));
             flash_common_delete_by_index(get_flash_vm_hd(F_TYPE_HEART), 0);
@@ -86,16 +88,37 @@ static int heart_rate_file_write(void)
         u8 data_head[4];//数据段首信息
         data_head[0] = ntime.hour;
         data_head[1] = ntime.min;
-        data_head[2] = 0xff; //len_h
-        data_head[3] = 0xff; //len_l
+        data_head[2] = (heart_rate_data.Tcount >> 8 ) & 0xff; //保留位1;//0xff; //len_h
+        data_head[3] = heart_rate_data.Tcount & 0xff; //保留位20xff; //len_l
         printf("hour=%d,min=%d", data_head[0], data_head[1]);
         flash_common_write_packet(get_flash_vm_hd(F_TYPE_HEART), hrfiledata.file_id, 4, data_head);
         hrfiledata.w_file_offset += 4;
         printf("file_data0_head");
+        u8 cfg = 0;
+        syscfg_read(USR_SET_FLAG, &cfg, sizeof(USR_SET_FLAG));
+        printf("usr : cfg = %d",cfg);
+        if(!cfg){
+        flash_common_write_push(get_flash_vm_hd(F_TYPE_HEART) , hrfiledata.file_id);
+        u8 usr_set_flag = 1;
+        u8 ret = syscfg_write(USR_SET_FLAG, &usr_set_flag, sizeof(usr_set_flag));
+        }
+    // u16 head_data_len = hrfiledata.w_file_offset - hrfiledata.w_data_head_offset - 4;
+    // u8 len_buf[2];
+    // len_buf[0] = (head_data_len >> 8) & 0xff;
+    // len_buf[1] = head_data_len & 0xff;
+    // flash_common_write_push(get_flash_vm_hd(F_TYPE_STEP), hrfiledata.file_id);
+    // flash_common_update_by_id(get_flash_vm_hd(F_TYPE_STEP), hrfiledata.file_id, hrfiledata.w_data_head_offset + 2, 2, len_buf);
+        // flash_common_get_id_table(get_flash_vm_hd(F_TYPE_HEART) ,4 , &usr_data);
+        // printf("---------------------1-------------------------\n");
+        // put_buf(usr_data , 4);
+        // printf("**********************************************\n");
+
     } else if (hrfiledata.file_status == HR_FILE_BREAK) { //数据被打断
+        printf("func : %s , line = %d" , __func__ , __LINE__);
         u8 *tmp_buf = zalloc(hrfiledata.w_file_offset + 1);
         //读取旧文件数据
         flash_common_read_by_id(get_flash_vm_hd(F_TYPE_HEART), hrfiledata.file_id, 0, hrfiledata.w_file_offset, tmp_buf);
+        put_buf(tmp_buf, sizeof(tmp_buf));
         //删除旧文件
         flash_common_delete_by_id(get_flash_vm_hd(F_TYPE_HEART), hrfiledata.file_id);
         //创建新文件
@@ -117,6 +140,10 @@ static int heart_rate_file_write(void)
     printf("hrfile  seek=%d len=%d ", hrfiledata.w_file_offset, (60 / HR_TIME_INTERVAL));
     flash_common_write_packet(get_flash_vm_hd(F_TYPE_HEART), hrfiledata.file_id,	(60 / HR_TIME_INTERVAL), heart_rate_data.real_rate_buf);
     hrfiledata.w_file_offset += (60 / HR_TIME_INTERVAL);
+    // flash_common_get_id_table(get_flash_vm_hd(F_TYPE_HEART) ,4 , &usr_data);
+    // printf("---------------------2-------------------------\n");
+    // put_buf(usr_data , 4);
+    // printf("**********************************************\n");
 #else
     if (hrfiledata.file_status == HR_FILE_NULL) { //当日数据未记录
         u8 fbuf[11];//写文件头
@@ -427,19 +454,20 @@ static void heart_rate_refresh_data_handle(void)
 #else
     struct watch_heart_rate __heartrate_hd;
     watch_heart_rate_handle_get(&__heartrate_hd);
-    heart_rate_data.real_rate_value = __heartrate_hd.heart_rate_data_get(LAST_DATA, NULL);
+     heart_rate_data.real_rate_value = rand32() % 40 + 70;//模拟数据//heart_rate_data.real_rate_value = 79;//80;//__heartrate_hd.heart_rate_data_get(LAST_DATA, NULL);
 #endif
 
 #if heartrate_file_enable
     heart_rate_data.real_rate_buf[heart_rate_data.Tcount] = heart_rate_data.real_rate_value;
     heart_rate_data.Tcount++;
+    printf("heart_rate_data.Tcount = %d",heart_rate_data.Tcount);
     struct sys_time ntime;
     watch_file_get_sys_time(&ntime);
     if ((ntime.hour == 23) & (ntime.min > 55)) {
         heart_rate_file_write_stop();
         return;
     }
-    if (heart_rate_data.Tcount == (60 / HR_TIME_INTERVAL)) {
+    if (heart_rate_data.Tcount == (30 / HR_TIME_INTERVAL)) {
         heart_rate_file_write();
         heart_rate_data.Tcount = 0;
     }
@@ -451,7 +479,7 @@ static void heart_rate_refresh_data(void *priv)
     heart_rate_refresh_data_handle();
 #else
     read_heart_rate_task();//打开传感器的20-30秒后的数据较为稳定真实
-    sys_timeout_add(NULL, heart_rate_refresh_data_handle, 20 * 1000);
+    sys_timeout_add(NULL, heart_rate_refresh_data_handle, 2 * 1000);
 #endif
 
 }
@@ -466,10 +494,12 @@ int heart_rate_start(void)
         printf("Repeated call%s", __func__);
         return 0;
     }
-    heart_rate_data.systimerid = sys_timer_add(NULL, heart_rate_refresh_data, 60 * 1000 * HR_TIME_INTERVAL); //TIME_INTERVAL分钟进行一次读数
+    heart_rate_data.systimerid = sys_timer_add(NULL, heart_rate_refresh_data, 2000/*60 * 1000 * HR_TIME_INTERVAL*/); //TIME_INTERVAL分钟进行一次读数
     //处理文件状态初值
 #if heartrate_file_enable
     if (heart_rate_file_time_get(NULL) == 0) {
+    u8 usr_set_flag = 0;
+    u8 ret = syscfg_write(USR_SET_FLAG, &usr_set_flag, sizeof(usr_set_flag));
         hrfiledata.file_status = HR_FILE_NULL;
     } else {
         hrfiledata.file_status = HR_FILE_BREAK;

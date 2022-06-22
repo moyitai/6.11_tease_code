@@ -67,19 +67,23 @@ __file_simple_opt_get_id_table_end:
 
 static void file_simple_opt_query(void *priv, u8 OpCode_SN, u8 *data, u16 len)
 {
+    printf("%s",__func__);
     u16 index = 0;
     u8 file_type = data[0];
     u8 *resp_data = NULL;
 
     u16 reserved_len = 2;
     int resp_len = file_simple_opt_get_id_table(file_type, &resp_data, reserved_len);
+    printf("func: %s , resp_len = %d\n",__func__ , resp_len);
     if (!resp_len) {
+        printf("goto __file_simple_opt_query_end\n");
         goto __file_simple_opt_query_end;
     }
 
     index = reserved_len;
     for (u16 i = reserved_len; i < resp_len + reserved_len; i += 4) {
         if (0 == (resp_data[i + 2] | resp_data[i + 3])) {
+            printf("func: %s ,i = %d" , __func__ , i);
             continue;
         }
 
@@ -104,11 +108,15 @@ __file_simple_opt_query_end:
     if (index > reserved_len) {
         resp_data[0] = FILE_SIMPLE_OPT_QUERY;
         resp_data[1] = FILE_SIMPLE_TRANSFER_VERSION;
+        printf("index > reserved_len ,put buf :\n");
+        put_buf(resp_data , sizeof(resp_data));
         JL_CMD_response_send(JL_OPCODE_SIMPLE_FILE_TRANS, JL_PRO_STATUS_SUCCESS, OpCode_SN, resp_data, index);
     } else {
         // 防止使用resp_data时是空
         data[0] = FILE_SIMPLE_OPT_QUERY;
         data[1] = FILE_SIMPLE_TRANSFER_VERSION;
+        printf("index <= reserved_len ,put buf :\n");
+        put_buf(data , sizeof(data));
         JL_CMD_response_send(JL_OPCODE_SIMPLE_FILE_TRANS, JL_PRO_STATUS_SUCCESS, OpCode_SN, data, 2);
     }
 
@@ -370,6 +378,7 @@ void file_simple_transfer_for_small_file(void *priv, u8 OpCode_SN, u8 *data, u16
     u8 op = data[0];
     switch (op) {
     case FILE_SIMPLE_OPT_QUERY:
+        printf(" FILE_SIMPLE_OPT_QUERY %s %d",__func__,__LINE__);
         file_simple_opt_query(priv, OpCode_SN, data + 1, len - 1);
         break;
     case FILE_SIMPLE_OPT_READ:
@@ -414,6 +423,7 @@ static int simple_trans_get_id_table_len(u8 file_type)
 static int simple_trans_get_id_table(u8 file_type, u8 *table_data, u16 data_len)
 {
 #if TCFG_NOR_VM
+    printf("usr :file_type = %d  , data_len = %d\n" , file_type , data_len);
     int ret = flash_common_get_id_table(get_flash_vm_hd(file_type), data_len, table_data);
     put_buf(table_data, data_len);
     return ret;
@@ -425,7 +435,7 @@ static int simple_trans_get_id_table(u8 file_type, u8 *table_data, u16 data_len)
 static int simple_trans_read_file_by_id(u8 file_type, u16 id, u32 data_offset, u8 *data, u16 data_len)
 {
 #if TCFG_NOR_VM
-    printf("%s, %d, %d, %d\n", __func__, __LINE__, id, data_len);
+    printf("%s, %d, %d, %d , %d\n", __func__, __LINE__, id, data_len , file_type);
     int len = flash_common_read_by_id(get_flash_vm_hd(file_type), id, data_offset, data_len, data);
     put_buf(data, len);
     printf("len =%d data_offset=%d\n", len, data_offset);
